@@ -50,11 +50,11 @@ void loop() {
 
  if (switchStateBA == HIGH) {
     alarmOn();
-    burglarAlarmLampOn()
+    burglarAlarmLampOn();
       }
   else { 
     alarmOff();
-    burglarAlarmLampOff(){
+    burglarAlarmLampOff();{
 }
 
   if (switchStateWL == HIGH) {
@@ -85,15 +85,15 @@ if (switchStatePC == HIGH) {
     alarmOff();
   }
 
- tempAirFirst = analogRead(tempFirstFlr);
+ tempAirFirst = analogRead(tempFirstSens);
  tempAirFirst = (tempAirFirst / 1024.0)*5000;
  tempAirFirst =  tempAirFirst / 10;
 
  if (tempAirFirst < 15.00){
   heatingElementOneOn();
  }
- else if(tempAirFirst > 20.00{
-  heatinfElementOneOff();
+ else if(tempAirFirst > 20.00){
+  heatingElementOneOff();
  }
 
  tempAirSecond = analogRead(tempSecondSens);
@@ -103,13 +103,13 @@ if (switchStatePC == HIGH) {
 if (tempAirSecond < 15.00){
   heatingElementTwoOn();
  }
- else if(tempAirSecond > 20.00{
-  heatinfElementTwoOff();
+ else if(tempAirSecond > 20.00){
+  heatingElementTwoOff();
  }
  
  delay(1000);
 
-}
+}}
 
 void alarmOff(){
    digitalWrite(8, LOW); 
