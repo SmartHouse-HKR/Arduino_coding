@@ -2,6 +2,8 @@ int elecConsumption = A0;
 int tempFirstFlr = A1;
 int tempSecondFlr = A2;
 int LDR = A3;
+//temporary variable
+int number = 3.14;
 
 void setup() {
   
