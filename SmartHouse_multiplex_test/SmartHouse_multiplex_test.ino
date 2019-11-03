@@ -1,8 +1,10 @@
+//Analog pins
 int elecConsumption = A0;
 int tempFirstSens = A1;
 int tempSecondSens = A2;
 int LDR = A3;
 
+//Switch setup
 int switchStateFA = 0;
 int switchStateBA = 0;
 int switchStateWL = 0;
@@ -10,6 +12,7 @@ int switchStateO = 0;
 int switchStateW = 0;
 int switchStatePC = 0;
 
+//Temp sensor setup
 float tempAirFirst;
 float tempAirSecond; 
 
