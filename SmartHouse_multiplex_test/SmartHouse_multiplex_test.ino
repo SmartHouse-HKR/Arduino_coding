@@ -39,6 +39,7 @@ void setup() {
   pinMode(12, OUTPUT); //MUX3
   pinMode(13, OUTPUT); //MUX4
 
+//Digital temp sensor setup
   digitalWrite(9, LOW);
   lastSample = 0;
   sampleSize = 0;
@@ -50,7 +51,8 @@ void setup() {
 }  
 
 void loop() {
-  
+
+//Switch setup  
   switchStateFA = digitalRead(2);
   switchStateBA = digitalRead(3);
   switchStateWL = digitalRead(4);
@@ -58,6 +60,7 @@ void loop() {
   switchStateW = digitalRead(6);
   switchStatePC = digitalRead(7);
 
+//Fire alarm
   if (switchStateFA == HIGH) {
     alarmOn(100);
   }
@@ -65,6 +68,7 @@ void loop() {
     alarmOff();
 }
 
+//Burglar alarm
  if (switchStateBA == HIGH) {
     alarmOn(100);
     burglarAlarmLampOn(120);
@@ -74,6 +78,7 @@ void loop() {
     burglarAlarmLampOff();
 }
 
+//Water leak
   if (switchStateWL == HIGH) {
     alarmOn(100);
       }
@@ -81,20 +86,23 @@ void loop() {
     alarmOff();
 }  
 
+//Oven
 /*if (switchStateO == HIGH) {
     
       }
   else { 
     
 }*/
-
-if (switchStateW == HIGH) {
+//Window
+/*if (switchStateW == HIGH) {
     alarmOn(100);
       }
   else { 
     alarmOff();
 }  
+*/
 
+//Power cut
 if (switchStatePC == HIGH) {
     alarmOn(100);
       }
@@ -102,9 +110,14 @@ if (switchStatePC == HIGH) {
     alarmOff();
  }
 
- tempAirFirst = analogRead(tempFirstSens);
- tempAirFirst = (tempAirFirst / 1024.0)*5000;
- tempAirFirst =  tempAirFirst / 10;
+//Indoor temp sensor #1
+  tempAirFirst = analogRead(tempFirstSens);
+  tempAirFirst = (tempAirFirst / 1024.0)*5000;
+  tempAirFirst =  tempAirFirst / 10;
+
+  Serial.print("tempFirst is: ");
+  Serial.println(tempAirFirst); 
+  delay(3000);
 
 /* if (tempAirFirst < 15.00){
   heatingElementOneOn(120);
@@ -113,9 +126,14 @@ if (switchStatePC == HIGH) {
   heatingElementOneOff();
  }*/
 
- tempAirSecond = analogRead(tempSecondSens);
- tempAirSecond = (tempAirSecond / 1024.0)*5000;
- tempAirSecond =  tempAirSecond / 10;
+//Indoor temp sensor #2
+  tempAirSecond = analogRead(tempSecondSens);
+  tempAirSecond = (tempAirSecond / 1024.0)*5000;
+  tempAirSecond =  tempAirSecond / 10;
+
+  Serial.print("tempSecond is: ");
+  Serial.println(tempAirSecond); 
+  delay(3000);
   
 /*if (tempAirSecond < 15.00){
   heatingElementTwoOn(120);
@@ -123,24 +141,8 @@ if (switchStatePC == HIGH) {
  else if(tempAirSecond > 20.00){
   heatingElementTwoOff();
  }*/
-  
- delay(1000);
-
-  indoorLightingOn(150);
-//  indoorLightingOff();
-  outdoorLightingOn(160);
-//  outdoorLightingOff();
-
-  timerOneOn(170);
-//  timerOneOff();
-  timerTwoOn(180);
-//  timerTwoOff();
-
-//  heatingElementOneOn(120);
-  heatingElementOneOff();
-//  heatingElementTwoOn(130);
-  heatingElementOneOff();
-
+ 
+//Outdoor temp sensor
   now = micros();
     if (now - lastOutput > 500000) {
       hcf = highCount;
@@ -158,17 +160,34 @@ if (switchStatePC == HIGH) {
       lastSample = now;
     } else {
     delayMicroseconds(10);
-  }
+  } 
 
-  Serial.print("tempFirst is: ");
-  Serial.println(tempAirFirst); 
-  delay(3000);
+//TESTING
 
-  Serial.print("tempSecond is: ");
-  Serial.println(tempAirSecond); 
-  delay(3000);
+  indoorLightingOn(150);
+//  indoorLightingOff();
+  outdoorLightingOn(160);
+//  outdoorLightingOff();
+
+  timerOneOn(170);
+//  timerOneOff();
+  timerTwoOn(180);
+//  timerTwoOff();
+
+//  heatingElementOneOn(120);
+  heatingElementOneOff();
+//  heatingElementTwoOn(130);
+  heatingElementOneOff();
+
+//Fan
+/*  digitalWrite(10, HIGH);
+  delayMicroseconds(100); // Approximately 10% duty cycle @ 1KHz
+  digitalWrite(13, LOW);
+  delayMicroseconds(1000 - 100);
+*/
 
 }
+
 
 void alarmOff(){
    digitalWrite(8, LOW); 
