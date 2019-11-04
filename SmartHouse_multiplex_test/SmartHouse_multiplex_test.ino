@@ -68,7 +68,7 @@ void loop() {
     alarmOn(100);
   }
   else { 
-    alarmOff();
+    alarmOff(50);
 }
 
 //Burglar alarm
@@ -77,8 +77,8 @@ void loop() {
     burglarAlarmLampOn(120);
       }
   else { 
-    alarmOff();
-    burglarAlarmLampOff();
+    alarmOff(50);
+    burglarAlarmLampOff(60);
 }
 
 //Water leak
@@ -86,7 +86,7 @@ void loop() {
     alarmOn(100);
       }
   else { 
-    alarmOff();
+    alarmOff(50);
 }  
 
 //Oven
@@ -110,7 +110,7 @@ if (switchStatePC == HIGH) {
     alarmOn(100);
       }
   else { 
-    alarmOff();
+    alarmOff(50);
  }
 
 //Indoor temp sensor #1
@@ -168,9 +168,9 @@ if (switchStatePC == HIGH) {
 //TESTING
 
   indoorLightingOn(150);
-//  indoorLightingOff();
+//  indoorLightingOff(100);
   outdoorLightingOn(160);
-//  outdoorLightingOff();
+//  outdoorLightingOff(200);
 
   timerOneOn(170);
 //  timerOneOff();
@@ -178,26 +178,28 @@ if (switchStatePC == HIGH) {
 //  timerTwoOff();
 
 //  heatingElementOneOn(120);
-  heatingElementOneOff();
+  heatingElementOneOff(30);
 //  heatingElementTwoOn(130);
-  heatingElementOneOff();
+  heatingElementOneOff(40);
 
 //Fan
-/*  digitalWrite(10, HIGH);
+  digitalWrite(10, HIGH);
   delayMicroseconds(100); // Approximately 10% duty cycle @ 1KHz
-  digitalWrite(13, LOW);
+  digitalWrite(10, LOW);
   delayMicroseconds(1000 - 100);
-*/
+
 
 }
 
-
-void alarmOff(){
+void alarmOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-}
+}}
  
 void alarmOn(int interval){
    static long prevMill = 0;
@@ -209,12 +211,15 @@ void alarmOn(int interval){
    digitalWrite(13, LOW); 
 }}
  
-void burglarAlarmLampOff(){
+void burglarAlarmLampOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, HIGH); 
    digitalWrite(11, HIGH ); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW ); 
-}
+}}
     
 void burglarAlarmLampOn(int interval){
    static long prevMill = 0;
@@ -226,12 +231,15 @@ void burglarAlarmLampOn(int interval){
    digitalWrite(13, LOW ); 
 }}    
  
-void heatingElementOneOff(){
+void heatingElementOneOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-}    
+}    }
 
 void heatingElementOneOn(int interval){
    static long prevMill = 0;
@@ -243,12 +251,15 @@ void heatingElementOneOn(int interval){
    digitalWrite(13, HIGH); 
 }}
  
-void heatingElementTwoOff(){
+void heatingElementTwoOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-}
+}}
     
 void heatingElementTwoOn(int interval){
    static long prevMill = 0;
@@ -260,29 +271,35 @@ void heatingElementTwoOn(int interval){
    digitalWrite(13, HIGH); 
 }}    
 
-void indoorLightingOff(){
+void indoorLightingOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-}    
+}    }
  
 void indoorLightingOn(int interval){
    static long prevMill = 0;
    if ((millis() - prevMill) >= interval){ 
    prevMill = millis(); 
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-}}   
- 
-void outdoorLightingOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-}    
+}}   
+ 
+void outdoorLightingOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
+   digitalWrite(8, HIGH); 
+   digitalWrite(11, HIGH); 
+   digitalWrite(12, HIGH); 
+   digitalWrite(13, HIGH); 
+}    }
  
 void outdoorLightingOn(int interval){
    static long prevMill = 0;
@@ -294,12 +311,15 @@ void outdoorLightingOn(int interval){
    digitalWrite(13, HIGH); 
 }}
     
-void timerOneOff(){
+void timerOneOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
-   digitalWrite(12, HIGH); 
-}
+   digitalWrite(13, HIGH); 
+}}
     
 void timerOneOn(int interval){
    static long prevMill = 0;
@@ -311,12 +331,15 @@ void timerOneOn(int interval){
    digitalWrite(12, HIGH);
 }}
     
-void timerTwoOff(){
+void timerTwoOff(int interval){
+  static long prevMill = 0;
+   if ((millis() - prevMill) >= interval){ 
+   prevMill = millis(); 
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(12, LOW); 
-}    
+} }   
 
 void timerTwoOn(int interval){
    static long prevMill = 0;
@@ -325,5 +348,5 @@ void timerTwoOn(int interval){
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
-   digitalWrite(12, LOW); 
+   digitalWrite(13, LOW); 
 }}
