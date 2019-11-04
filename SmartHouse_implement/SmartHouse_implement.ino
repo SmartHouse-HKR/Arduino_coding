@@ -10,6 +10,7 @@ int switchStateO = 0;
 int switchStateW = 0;
 int switchStatePC = 0;
 
+//Temp sensor setup
 float tempAirFirst;
 float tempAirSecond; 
 
@@ -41,7 +42,7 @@ void loop() {
   switchStateW = digitalRead(6);
   switchStatePC = digitalRead(7);
 
-  if (switchStateFA == HIGH) {
+/*  if (switchStateFA == HIGH) {
     alarmOn();
   }
   else { 
@@ -84,30 +85,31 @@ if (switchStatePC == HIGH) {
   else { 
     alarmOff();
   }
+*/
 
  tempAirFirst = analogRead(tempFirstSens);
  tempAirFirst = (tempAirFirst / 1024.0)*5000;
  tempAirFirst =  tempAirFirst / 10;
 
- if (tempAirFirst < 15.00){
+/* if (tempAirFirst < 15.00){
   heatingElementOneOn();
  }
  else if(tempAirFirst > 20.00){
   heatingElementOneOff();
  }
+*/
 
  tempAirSecond = analogRead(tempSecondSens);
  tempAirSecond = (tempAirSecond / 1024.0)*5000;
  tempAirSecond =  tempAirSecond / 10;
   
-if (tempAirSecond < 15.00){
+/*if (tempAirSecond < 15.00){
   heatingElementTwoOn();
  }
  else if(tempAirSecond > 20.00){
   heatingElementTwoOff();
  }
- 
- delay(1000);
+*/ 
 
 }}
 
