@@ -21,108 +21,122 @@ void setup() {
   pinMode(12, OUTPUT); //MUX3
   pinMode(13, OUTPUT); //MUX4
 
-
-  /*
-   * Alarm off:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, LOW); 
-   * 
-   * Alam on:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, LOW); 
-   * 
-   * Burglar alarm lamp off:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, HIGH ); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, LOW ); 
-   * 
-   * Burglar alarm lamp on:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, HIGH ); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, LOW ); 
-   * 
-   * Heating element 1 off:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Heating element 1 on:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Heating element 2 off:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, HIGH); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Heating element 2 on:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, HIGH); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Indoor lighting off:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, HIGH); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, LOW); 
-   * 
-   * Indoor lighting on:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Outdoor lighting off:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, HIGH); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Outdoor lighting on:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, HIGH); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, HIGH); 
-   * 
-   * Timer 1 off:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(12, HIGH); 
-   * 
-   * Timer 1 on:
-   * digitalWrite(8, LOW); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(12, HIGH);
-   * 
-   * Timer 2 off:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, HIGH); 
-   * digitalWrite(12, LOW); 
-   * 
-   * Timer 2 on:
-   * digitalWrite(8, HIGH); 
-   * digitalWrite(11, LOW); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(12, LOW); 
-   *
-    */
+  
 }  
 
 void loop() {
   // put your main code here, to run repeatedly:
 
+}
+
+void alarmOff(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, LOW); 
+  digitalWrite(13, LOW); 
+}
+   
+void alarmOn(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, LOW); 
+}
+
+void burglarAlarmLightOff(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, HIGH ); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, LOW ); 
+}
+ 
+void burglarAlarmLightOn(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, LOW); 
+  digitalWrite(13, LOW); 
+} 
+
+void heatingElementOff(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, HIGH); 
+}
+ 
+void heatingElementOneOn(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, LOW); 
+  digitalWrite(13, HIGH); 
+}
+   
+void heatingElementTwoOff(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, HIGH); 
+}
+ 
+void heatingElementTwoOn(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, LOW); 
+  digitalWrite(13, HIGH);
+}   
+   
+void indoorLightingOff(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, LOW); 
+}
+ 
+void indoorLightingOn(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, HIGH);
+}   
+   
+void outdoorLightingOff(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(13, HIGH); 
+}
+ 
+void outdoorLightingOn(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, HIGH); 
+  digitalWrite(12, LOW); 
+  digitalWrite(13, HIGH); 
+}
+    
+void timerOneOff(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(12, HIGH); 
+} 
+
+void timerOneOn(){
+  digitalWrite(8, LOW); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, LOW); 
+  digitalWrite(12, HIGH);
+}
+    
+void timerTwoOff(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, HIGH); 
+  digitalWrite(12, LOW);
+} 
+ 
+void timerTwoOn(){
+  digitalWrite(8, HIGH); 
+  digitalWrite(11, LOW); 
+  digitalWrite(12, LOW); 
+  digitalWrite(12, LOW); 
 }
