@@ -74,7 +74,7 @@ void setup() {
    * Indoor lighting off:
    * digitalWrite(8, LOW); 
    * digitalWrite(11, HIGH); 
-   * digitalWrite(12, LOW); 
+   * digitalWrite(12, HIGH); 
    * digitalWrite(13, LOW); 
    * 
    * Indoor lighting on:
@@ -84,10 +84,10 @@ void setup() {
    * digitalWrite(13, HIGH); 
    * 
    * Outdoor lighting off:
-   * digitalWrite(8, LOW); 
+   * digitalWrite(8, HIGH); 
    * digitalWrite(11, HIGH); 
-   * digitalWrite(12, LOW); 
-   * digitalWrite(13, LOW); 
+   * digitalWrite(12, HIGH); 
+   * digitalWrite(13, HIGH); 
    * 
    * Outdoor lighting on:
    * digitalWrite(8, HIGH); 
