@@ -64,6 +64,24 @@ if(rx_byte == '9'){
 if(rx_byte == '0'){
   fanOn();
 }
+if(rx_byte == 'q'){
+  heatingOn();
+}
+if(rx_byte == 'w'){
+  heatingOff();
+}
+if(rx_byte == 'a'){
+  timer1();
+}
+if(rx_byte == 's'){
+  timer1Off();
+}
+if(rx_byte == 'z'){
+  timer2();
+}
+if(rx_byte == 'x'){
+  timer2Off();
+}
   
 
   
@@ -155,4 +173,49 @@ void fanOn(){
 }
 void fanOff(){
   analogWrite(fan, 0);
+}
+
+
+void heatingOn(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, HIGH);
+  
+}
+
+void heatingOff(){
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, HIGH);
+  
+}
+void timer1(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+  
+}
+void timer1Off(){
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+  
+}
+void timer2(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, HIGH);
+  
+}
+void timer2Off(){
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+  
 }
