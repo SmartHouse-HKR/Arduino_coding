@@ -12,6 +12,8 @@ boolean outsideLight=false;
 boolean alarm1=false;
 int fan=10;
 
+char rx_byte = 0;
+
 void setup() {
   pinMode(mux1, OUTPUT);
   pinMode(mux2, OUTPUT);
@@ -26,38 +28,43 @@ void setup() {
 }
 
 void loop() {
-  analogWrite(fan, 175);
-  if(lightInside==true){
+  if(Serial.available()  > 0){
+    rx_byte = Serial.read();
+  }
+
+
+
+if(rx_byte == '1'){
   lightOn();
-  }else{
-    delay(5000);
-    lightInside=true;
-    return;
-  }
-
-  if(outsideLight==true){
+}
+if(rx_byte == '2'){
+  lightOff();
+}
+if(rx_byte == '3'){
   lightOn2();
-  }else{
-    delay(5000);
-    outsideLight=true;
-    return;
-  }
-
-   if(alarm1==true){
-   alarm();
-   }else{
-    delay(5000);
-    alarm1=true;
-    return;
-   }
-
-   analogWrite(fan, 175);
-
-
-   digitalWrite(mux1, LOW);
-   digitalWrite(mux2,HIGH);
-   digitalWrite(mux3,HIGH);
-   digitalWrite(mux4,HIGH);
+}
+if(rx_byte == '4'){
+  lightOff2();
+}
+if(rx_byte == '5'){
+  alarm();
+}
+if(rx_byte == '6'){
+  alarmOff();
+}
+if(rx_byte == '7'){
+  heatingWind();
+}
+if(rx_byte == '8'){
+  heatingWindOff();
+}
+if(rx_byte == '9'){
+  fanOn();
+}
+if(rx_byte == '0'){
+  fanOn();
+}
+  
 
   
 
@@ -79,9 +86,23 @@ digitalWrite(mux1, LOW);
   digitalWrite(mux3, HIGH);
   digitalWrite(mux4, LOW);
 }
+void lightOff(){
+
+digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, LOW);
+}
 
 void lightOn2(){
   digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, HIGH);
+  
+}
+void lightOff2(){
+  digitalWrite(mux1, HIGH);
   digitalWrite(mux2, HIGH);
   digitalWrite(mux3, HIGH);
   digitalWrite(mux4, HIGH);
@@ -93,5 +114,45 @@ void alarm(){
   digitalWrite(mux2, LOW);
   digitalWrite(mux3, HIGH);
   digitalWrite(mux4, HIGH);
+delay(50);
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
   
+}
+
+void alarmOff(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+delay(50);
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, HIGH);
+  
+}
+
+void heatingWind(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, LOW);
+  
+}
+void heatingWindOff(){
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, LOW);
+  
+}
+
+void fanOn(){
+  analogWrite(fan, 175);
+}
+void fanOff(){
+  analogWrite(fan, 0);
 }
