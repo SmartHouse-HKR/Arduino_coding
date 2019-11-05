@@ -184,9 +184,9 @@ if (switchStatePC == HIGH) {
 
 //Fan
   digitalWrite(10, HIGH);
-  delayMicroseconds(100); // Approximately 10% duty cycle @ 1KHz
+  delayMicroseconds(500); // Approximately 10% duty cycle @ 1KHz
   digitalWrite(10, LOW);
-  delayMicroseconds(1000 - 100);
+  delayMicroseconds(1000 - 500);
 
 
 }
