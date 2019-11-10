@@ -1,14 +1,23 @@
 int elecConsumption = A0;
 int tempFirstSens = A1;
 int tempSecondSens = A2;
-int LDR = A3;
+int lightSensor = A3;
+
+const byte fireAlarmSwitch = 2;
+const byte burglarAlarmSensor = 3;
+const byte waterLeakSwitch = 4; 
+const byte ovenSwitch = 5;
+const byte windowOpenSwitch = 6;
+const byte powerCut = 7;
+const byte tempSensorOutside = 9;
+const byte fan = 10;
 
 int switchStateFA = 0;
-int switchStateBA = 0;
+int sensorStateBA = 0;
 int switchStateWL = 0;
 int switchStateO = 0;
 int switchStateW = 0;
-int switchStatePC = 0;
+int sensorStatePC = 0;
 
 char rx_byte = 0;
 
@@ -17,33 +26,36 @@ float tempAirSecond;
 
 void setup() {
   
-  pinMode(0, INPUT); //RX
-  pinMode(1, INPUT); //LX
-  pinMode(2, INPUT); //Fire alarm on/off
-  pinMode(3, INPUT); //Burglar alarm on/off
-  pinMode(4, INPUT); //Water leakage on/off
-  pinMode(5, INPUT); //Oven on/off
-  pinMode(6, INPUT); //Window on/off
-  pinMode(7, INPUT); //Power cut on/off
-  pinMode(9, INPUT); //Temp outside
-  pinMode(10, OUTPUT); //Fan
+  pinMode(fireAlarmSwitch, INPUT);
+  pinMode(burglarAlarmSensor, INPUT);
+  pinMode(waterLeakSwitch, INPUT);
+  pinMode(ovenSwitch, INPUT);
+  pinMode(windowOpenSwitch, INPUT); 
+  pinMode(powerCut, INPUT);
+  pinMode(tempSensorOutside, INPUT);
+  pinMode(fan, OUTPUT); 
 
   pinMode(8, OUTPUT); //MUX1
   pinMode(11, OUTPUT); //MUX2
   pinMode(12, OUTPUT); //MUX3
   pinMode(13, OUTPUT); //MUX4
 
+  attachInterrupt(digitalPinToInterrupt(fireAlarmSwitch), alarmOn, RISING);
+  attachInterrupt(digitalPinToInterrupt(burglarAlarmSensor), burglarsAfoot, RISING);
+
   Serial.begin(9600);
 }  
 
 void loop() {
   
-  switchStateFA = digitalRead(2);
-  switchStateBA = digitalRead(3);
-  switchStateWL = digitalRead(4);
-  switchStateO = digitalRead(5);
-  switchStateW = digitalRead(6);
-  switchStatePC = digitalRead(7);
+//  switchStateFA = digitalRead(fireAlarmSwitch);
+//  sensorStateBA = digitalRead(burglarAlarmSensor);
+  switchStateWL = digitalRead(waterLeakSwitch);
+  switchStateO = digitalRead(ovenSwitch);
+  switchStateW = digitalRead(windowOpenSwitch);
+  sensorStatePC = digitalRead(powerCut);
+
+  
 
   tempAirFirst = analogRead(tempFirstSens);
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
@@ -74,11 +86,11 @@ void loop() {
   }
 
   if(rx_byte == '1'){
-    indoorLightingOn();
+    indoorLightOn();
   }
 
   if(rx_byte == '2'){
-    indoorLightingOff();
+    indoorLightOff();
   }
 
   if(rx_byte == '3'){
@@ -86,7 +98,7 @@ void loop() {
   }
 
   if(rx_byte == '4'){
-    OutdoorLightOff();
+    outdoorLightOff();
   }
 
   if(rx_byte == '5'){
@@ -106,7 +118,7 @@ void loop() {
   }
 
   if(rx_byte == '9'){
-    heatingElementOneOne();
+    heatingElementOneOn();
   }
 
   if(rx_byte == '0'){
@@ -114,15 +126,15 @@ void loop() {
   }
   
   if(rx_byte == 'q'){
-    heatingElementTwoOne()();
+    heatingElementTwoOn();
   }
   
   if(rx_byte == 'w'){
-    heatingElementTwoOff());
+    heatingElementTwoOff();
   }
   
   if(rx_byte == 'a'){
-    timerOneOne();
+    timerOneOn();
   }
   
   if(rx_byte == 's'){
@@ -200,28 +212,28 @@ void heatingElementTwoOn(){
    digitalWrite(13, HIGH); 
 }    
 
-void indoorLightingOff(){
+void indoorLightOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
 }    
  
-void indoorLightingOn(){
+void indoorLightOn(){
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
 }    
  
-void outdoorLightingOff(){
+void outdoorLightOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
 }    
  
-void outdoorLightingOn(){
+void outdoorLightOn(){
    digitalWrite(8, HIGH); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
@@ -254,4 +266,9 @@ void timerTwoOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(12, LOW); 
+}
+
+void burglarsAfoot(){
+  alarmOn();
+  burglarAlarmLampOn();
 }
