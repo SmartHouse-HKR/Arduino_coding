@@ -184,9 +184,9 @@ if (switchStatePC == HIGH) {
 
 //Fan
   digitalWrite(10, HIGH);
-  delayMicroseconds(100); // Approximately 10% duty cycle @ 1KHz
+  delayMicroseconds(500); // Approximately 10% duty cycle @ 1KHz
   digitalWrite(10, LOW);
-  delayMicroseconds(1000 - 100);
+  delayMicroseconds(1000 - 500);
 
 
 }
@@ -328,7 +328,7 @@ void timerOneOn(int interval){
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
-   digitalWrite(12, HIGH);
+   digitalWrite(13, HIGH);
 }}
     
 void timerTwoOff(int interval){
@@ -338,7 +338,7 @@ void timerTwoOff(int interval){
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
-   digitalWrite(12, LOW); 
+   digitalWrite(13, LOW); 
 } }   
 
 void timerTwoOn(int interval){
