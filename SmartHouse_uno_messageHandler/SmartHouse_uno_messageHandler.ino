@@ -12,35 +12,46 @@ int fanPin = 13;
 void sendMessage(String message){
 
         char charArray[50];
-        message.toCharArray(charArray, 20);
+        message.toCharArray(charArray, 49);
         wifiMessage.write(charArray);
-        wifiMessage.write(messageSent++);
         wifiMessage.write('\n');
 }
 
 void messageHandler(String returnedMessage) {
-  if(returnedMessage.equals("ON")) {
-          turnOnLight();
-          digitalWrite(fanPin, HIGH);
-          Serial.println(returnedMessage);
-  }else if(returnedMessage.equals("OFF")) {
-          turnOffLight();
-          digitalWrite(fanPin, LOW);
-  }
+        if(returnedMessage.equals("ON")) {
+                turnOnLight();
+                digitalWrite(fanPin, HIGH);
+                Serial.println(returnedMessage);
+        }else if(returnedMessage.equals("OFF")) {
+                turnOffLight();
+                digitalWrite(fanPin, LOW);
+        }
 }
 
-String receivedMessage(){
+String* receivedTopicAndMessage(){
         char part;
-        String message= "";
+        String message = "";
+        String topic = "";
+        bool topicDone  = false;
         while(wifiMessage.available()) {
                 part = ((char)wifiMessage.read());
-                if(part != '\n') {
-                        message += part;
-                }else if(message != "")
+
+                if (part == ' ')
+                        topicDone = true;
+                else if(part == '\n' || message != "")
                         break;
+
+                if(topicDone)
+                        topic += part;
+                else
+                        message += part;
+
                 delay(50);
         }
-        return message;
+        String* returnArray;
+        returnArray[0] = topic;
+        returnArray[1] =  message;
+        return returnArray;
 }
 
 void turnOnLight(){
@@ -75,7 +86,9 @@ void loop(){
 
 
         if(wifiMessage.available()) {
-           messageHandler(receivedMessage());
+          String* topicAndMessage = receivedTopicAndMessage();
+
+                messageHandler(topicAndMessage[0]+ " " + topicAndMessage[1]);
 
         }
 }

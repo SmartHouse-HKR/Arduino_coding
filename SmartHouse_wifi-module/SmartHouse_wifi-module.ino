@@ -1,13 +1,8 @@
-/////////////////////////////////
-// Generated with a lot of love//
-// with TUNIOT FOR ESP8266     //
-// Website: Easycoding.tn      //
-/////////////////////////////////
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
 #include <PubSubClient.h>
 
-SoftwareSerial softSerial(D2,D3);
+SoftwareSerial unoMessage(D2,D3);
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -15,8 +10,8 @@ String networkSSL = "Ras_the_Moose";
 String networkPassword = "12345678";
 String ipAddress = "194.47.28.11";
 uint16_t port = 1883;
-String message = "HEY";
 int ledPin = 13;
+String message;
 char msgmqtt[50];
 
 
@@ -45,13 +40,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
                 MQTT_DATA += (char)payload[i];
         }
         Serial.println("message received from topic: " + MQTT_DATA + ", Topic:  " + topic);
-        dataHandler(MQTT_DATA);
+        sendMessage(topic + ' ' + MQTT_DATA);
 }
 
 void setup(){
 
         Serial.begin(9600);
-        softSerial.begin(4800);
+        unoMessage.begin(4800);
         pinMode(D2,INPUT);
         pinMode(D3,OUTPUT);
         pinMode(D7, OUTPUT);
@@ -71,27 +66,19 @@ void setup(){
         client.setCallback(callback);
 
 }
-void dataHandler(String data){
-        if(data.equals("ON")) {
-                sendMessage("ON");
-        } else if(data.equals("OFF")) {
-                sendMessage("OFF");
-        }
-
-}
 
 void sendMessage(String message){
         char charArray[50];
-        message.toCharArray(charArray, 20);
-        softSerial.write(charArray);
-        softSerial.write('\n');
+        message.toCharArray(charArray, 49);
+        unoMessage.write(charArray);
+        unoMessage.write('\n');
 }
 
 String receivedArduinoMessage(){
         char part;
         String message= "";
-        while(softSerial.available()) {
-                part = ((char)softSerial.read());
+        while(unoMessage.available()) {
+                part = ((char)unoMessage.read());
                 if(part != '\n') {
                         message += part;
                 }else if(message != "")
@@ -102,8 +89,15 @@ String receivedArduinoMessage(){
         return message;
 }
 
-void arduinoHandler(String arduinoData){
+void unoMessageHandler(String arduinoData){
         Serial.println(arduinoData);
+}
+void publishMqtt(String topic, String message){
+        char messageCharArray[50];
+        message.toCharArray(messageCharArray, 50);
+        char topicCharArray[50];
+        topic.toCharArray(topicCharArray, 50);
+        client.publish(topicCharArray, messageCharArray);
 }
 
 void loop()
@@ -114,13 +108,10 @@ void loop()
         }
         client.loop();
         snprintf (msgmqtt, 50, message.c_str());
-        String msg = "boppa loppa";
-        msg.toCharArray(msgmqtt, 50);
-        client.publish("test", msgmqtt);
+        publishMqtt("Topic", "MQTT_message");
         delay(5000);
-
-        if(softSerial.available())
-                arduinoHandler(receivedArduinoMessage());
+        if(unoMessage.available())
+                unoMessageHandler(receivedArduinoMessage());
 
 
 }
