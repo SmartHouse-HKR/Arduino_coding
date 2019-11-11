@@ -238,17 +238,17 @@ void indoorLightOff(){
 }    
  
 void indoorLightOn(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-}    
- 
-void outdoorLightOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+}    
+ 
+void outdoorLightOff(){
+   digitalWrite(8, HIGH); 
+   digitalWrite(11, HIGH); 
+   digitalWrite(12, HIGH); 
+   digitalWrite(13, HIGH); 
 }    
  
 void outdoorLightOn(){
