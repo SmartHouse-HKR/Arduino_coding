@@ -12,8 +12,8 @@ const byte powerCut = 7;
 const byte tempSensorOutside = 9;
 const byte fan = 10;
 
-int switchStateFA = 0;
-int sensorStateBA = 0;
+//int switchStateFA = 0;
+//int sensorStateBA = 0;
 int switchStateWL = 0;
 int switchStateO = 0;
 int switchStateW = 0;
@@ -21,11 +21,15 @@ int sensorStatePC = 0;
 
 char rx_byte = 0;
 
+volatile boolean burglarArmInterrupt;
+volatile boolean fireAlarmInterrupt;
+
 float tempAirFirst;
 float tempAirSecond; 
 
 void setup() {
-  
+
+ 
   pinMode(fireAlarmSwitch, INPUT);
   pinMode(burglarAlarmSensor, INPUT);
   pinMode(waterLeakSwitch, INPUT);
@@ -40,8 +44,12 @@ void setup() {
   pinMode(12, OUTPUT); //MUX3
   pinMode(13, OUTPUT); //MUX4
 
-  attachInterrupt(digitalPinToInterrupt(fireAlarmSwitch), alarmOn, RISING);
-  attachInterrupt(digitalPinToInterrupt(burglarAlarmSensor), burglarsAfoot, RISING);
+  attachInterrupt(digitalPinToInterrupt(fireAlarmSwitch), alarmOnSubRoutine, CHANGE);
+
+  attachInterrupt(digitalPinToInterrupt(burglarAlarmSensor), burglarsAfoot, FALLING);
+
+  digitalWrite(fireAlarmSwitch, LOW);
+  digitalWrite(burglarAlarmSensor, HIGH);
 
   Serial.begin(9600);
 }  
@@ -84,6 +92,11 @@ void loop() {
   if(Serial.available()  > 0){
     rx_byte = Serial.read();
   }
+
+//  sensorValue = analogRead(lightSensor); // read the value from the sensor
+//  Serial.println(sensorValue); //prints the values coming from the sensor on the screen
+
+//  if(sensorValue < 300)
 
   if(rx_byte == '1'){
     indoorLightOn();
@@ -149,9 +162,15 @@ void loop() {
   timerTwoOff();
   }  
 
-  digitalWrite(10, HIGH);
+  if(fireAlarmInterrupt){
+alarmOn();
+    }else {
+      alarmOff();
+      }
+
+  digitalWrite(fan, HIGH);
   delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
-  digitalWrite(10, LOW);
+  digitalWrite(fan, LOW);
   delayMicroseconds(1000 - 500);
 
 }
@@ -267,6 +286,11 @@ void timerTwoOn(){
    digitalWrite(12, LOW); 
    digitalWrite(12, LOW); 
 }
+ 
+void alarmOnSubRoutine(){
+  fireAlarmInterrupt = !fireAlarmInterrupt;
+}
+
 
 void burglarsAfoot(){
   alarmOn();

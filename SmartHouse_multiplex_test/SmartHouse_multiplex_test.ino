@@ -150,7 +150,7 @@ if (switchStatePC == HIGH) {
     if (now - lastOutput > 500000) {
       hcf = highCount;
       ssf = sampleSize;
-      outdoorTemp = ((hcf / ssf) -0.32)/0.0047;
+      outdoorTemp = ((1.0 *hcf / ssf) -0.32)/0.0047;
       Serial.print("Outdoor temp is: "); 
       Serial.println(outdoorTemp);
       lastOutput = now;
