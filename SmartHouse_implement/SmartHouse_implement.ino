@@ -13,6 +13,7 @@ const byte tempSensorOutside = 9;
 const byte fan = 10;
 
 char rx_byte = 0;
+int sensorValue = 0;
 
 volatile boolean burglarArmInterrupt;
 volatile boolean fireAlarmInterrupt;
@@ -54,8 +55,8 @@ void loop() {
   
 //___ Lights ___
 
- sensorValue = analogRead(lightSensor)
-// Serial.println(sensorValue); 
+  sensorValue = analogRead(lightSensor);
+//  Serial.println(sensorValue); 
 //  if(sensorValue < 300)
 
   if(rx_byte == '1'){
@@ -163,6 +164,13 @@ alarmOn();
   delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
   digitalWrite(fan, LOW);
   delayMicroseconds(1000 - 500);
+
+// ___ Volatge ___
+
+  int sensorValue = analogRead(elecConsumption);
+  float voltage = sensorValue * (5.0 / 1023.0);
+//  Serial.print("Voltage: "); 
+//  Serial.println(voltage);
 
 }
 
