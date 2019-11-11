@@ -12,13 +12,6 @@ const byte powerCut = 7;
 const byte tempSensorOutside = 9;
 const byte fan = 10;
 
-//int switchStateFA = 0;
-//int sensorStateBA = 0;
-int switchStateWL = 0;
-int switchStateO = 0;
-int switchStateW = 0;
-int sensorStatePC = 0;
-
 char rx_byte = 0;
 
 volatile boolean burglarArmInterrupt;
@@ -28,7 +21,6 @@ float tempAirFirst;
 float tempAirSecond; 
 
 void setup() {
-
  
   pinMode(fireAlarmSwitch, INPUT);
   pinMode(burglarAlarmSensor, INPUT);
@@ -45,25 +37,68 @@ void setup() {
   pinMode(13, OUTPUT); //MUX4
 
   attachInterrupt(digitalPinToInterrupt(fireAlarmSwitch), alarmOnSubRoutine, CHANGE);
-
   attachInterrupt(digitalPinToInterrupt(burglarAlarmSensor), burglarsAfoot, FALLING);
 
   digitalWrite(fireAlarmSwitch, LOW);
   digitalWrite(burglarAlarmSensor, HIGH);
 
   Serial.begin(9600);
+
 }  
 
-void loop() {
-  
-//  switchStateFA = digitalRead(fireAlarmSwitch);
-//  sensorStateBA = digitalRead(burglarAlarmSensor);
-  switchStateWL = digitalRead(waterLeakSwitch);
-  switchStateO = digitalRead(ovenSwitch);
-  switchStateW = digitalRead(windowOpenSwitch);
-  sensorStatePC = digitalRead(powerCut);
+void loop() {  
 
+  if(Serial.available()  > 0){
+    rx_byte = Serial.read();
+  }
   
+//___ Lights ___
+
+ sensorValue = analogRead(lightSensor)
+// Serial.println(sensorValue); 
+//  if(sensorValue < 300)
+
+  if(rx_byte == '1'){
+    indoorLightOn();
+  }
+
+  if(rx_byte == '2'){
+    indoorLightOff();
+  }
+
+  if(rx_byte == '3'){
+    outdoorLightOn();
+  }
+
+  if(rx_byte == '4'){
+    outdoorLightOff();
+  }
+  
+//___ Alarms ___
+
+ if(fireAlarmInterrupt){
+alarmOn();
+    }else {
+      alarmOff();
+      }
+
+  if(rx_byte == '5'){
+    alarmOn();
+  }
+
+  if(rx_byte == '6'){
+    alarmOff();
+  }
+
+  if(rx_byte == '7'){
+    burglarAlarmLampOn();
+  }
+
+  if(rx_byte == '8'){
+    burglarAlarmLampOff();
+  }
+
+//___ Heating ___
 
   tempAirFirst = analogRead(tempFirstSens);
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
@@ -88,48 +123,6 @@ void loop() {
   heatingElementTwoOff();
  }
 */ 
-
-  if(Serial.available()  > 0){
-    rx_byte = Serial.read();
-  }
-
-//  sensorValue = analogRead(lightSensor); // read the value from the sensor
-//  Serial.println(sensorValue); //prints the values coming from the sensor on the screen
-
-//  if(sensorValue < 300)
-
-  if(rx_byte == '1'){
-    indoorLightOn();
-  }
-
-  if(rx_byte == '2'){
-    indoorLightOff();
-  }
-
-  if(rx_byte == '3'){
-    outdoorLightOn();
-  }
-
-  if(rx_byte == '4'){
-    outdoorLightOff();
-  }
-
-  if(rx_byte == '5'){
-    alarmOn();
-  }
-
-  if(rx_byte == '6'){
-    alarmOff();
-  }
-
-  if(rx_byte == '7'){
-    burglarAlarmLampOn();
-  }
-
-  if(rx_byte == '8'){
-    burglarAlarmLampOff();
-  }
-
   if(rx_byte == '9'){
     heatingElementOneOn();
   }
@@ -145,6 +138,8 @@ void loop() {
   if(rx_byte == 'w'){
     heatingElementTwoOff();
   }
+
+//___ Timers ___
   
   if(rx_byte == 'a'){
     timerOneOn();
@@ -162,11 +157,7 @@ void loop() {
   timerTwoOff();
   }  
 
-  if(fireAlarmInterrupt){
-alarmOn();
-    }else {
-      alarmOff();
-      }
+//___ Fan ___
 
   digitalWrite(fan, HIGH);
   delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
