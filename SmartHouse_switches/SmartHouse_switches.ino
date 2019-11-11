@@ -2,7 +2,8 @@
 int fire = 2;
 int water = 4;
 int stove = 5; 
-int window = 6; 
+int window = 6;
+int checking; 
 
 //martin
 int tempSensor = A2;
