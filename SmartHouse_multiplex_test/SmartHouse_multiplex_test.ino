@@ -277,7 +277,7 @@ void indoorLightingOff(int interval){
    prevMill = millis(); 
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
-   digitalWrite(12, LOW); 
+   digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
 }    }
  
