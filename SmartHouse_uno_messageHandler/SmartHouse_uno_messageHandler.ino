@@ -1,13 +1,13 @@
 #include <SoftwareSerial.h>
-SoftwareSerial wifiMessage(2,3);
+SoftwareSerial wifiMessage(0,1);
 
 
 /*  Pin variables   */
-int pin1 = 8;
-int pin2 = 11;
-int pin3 = 12;
-int pin4 = 13;
-int fanPin = 13;
+int mux1=12;
+int mux2=13;
+int mux3=11;
+int mux4=8;
+int fan=10;
 
 /*  general variables */
 bool waitingMsg = false;
@@ -39,9 +39,9 @@ void messageHandler(String topic, String message) {
           }
         }else if(topic == "/smarthouse/light/state"){
           if(message == "true"){
-            Serial.println("Turning on light");
+            lightOn();
           }else if(message == "false"){
-            Serial.println("Turning off light");
+            lightOff();
           }
         }
         
@@ -79,31 +79,49 @@ String getWifiMessage(){
   return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-void turnOnLight(){
-        digitalWrite(pin1, HIGH);
-        digitalWrite(pin2, HIGH);
-        digitalWrite(pin3, LOW);
-        digitalWrite(pin4, HIGH);
-}
-void turnOffLight(){
-        digitalWrite(pin1, LOW);
-        digitalWrite(pin2, LOW);
-        digitalWrite(pin3, HIGH);
-        digitalWrite(pin4, HIGH);
-}
 void pinSetup(){
-        pinMode(pin1, OUTPUT);
-        pinMode(pin2, OUTPUT);
-        pinMode(pin3, OUTPUT);
-        pinMode(pin4, OUTPUT);
-        pinMode(fanPin, OUTPUT);
+  
+
+pinMode(mux1, OUTPUT);
+  pinMode(mux2, OUTPUT);
+  pinMode(mux3, OUTPUT);
+  pinMode(mux4, OUTPUT);
+    pinMode(fan, OUTPUT);
+
+}
+void lightOn(){
+
+digitalWrite(mux1, LOW);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, LOW);
+}
+void lightOff(){
+
+digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, LOW);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, LOW);
+}
+
+void lightOn2(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, HIGH);
+  
+}
+void lightOff2(){
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, HIGH);
+  digitalWrite(mux4, HIGH);
+  
 }
 
 void setup(){
 
         pinSetup();
-        
-        turnOffLight();
 
         Serial.begin(9600);
         wifiMessage.begin(4800);
