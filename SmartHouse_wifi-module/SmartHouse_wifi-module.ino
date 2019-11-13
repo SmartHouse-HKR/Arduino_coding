@@ -2,28 +2,39 @@
 #include <SoftwareSerial.h>
 #include <PubSubClient.h>
 
-SoftwareSerial unoMessage(D2,D3);
+SoftwareSerial unoMessager(D1,D2);
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+/*  Connection variables  */
 String networkSSL = "Ras_the_Moose";
 String networkPassword = "12345678";
-String ipAddress = "194.47.28.11";
+char* ipAddress = "192.168.43.99";
 uint16_t port = 1883;
+
+/*  Pin variables  */
 int ledPin = 13;
-String message;
+
+/*  Other variables  */
+
 char msgmqtt[50];
+        bool sendOnce = true;
+        char* message = "hey";
 
+char* toCharArr(String string){
+  char charArr[50];
+  string.toCharArray(charArr, 50);
+  return charArr;
+}
 
-void reconnectmqttserver() {
+void reconnectMqttServer() {
         while (!client.connected()) {
-                Serial.print("Attempting MQTT connection...");
+                Serial.print("Attempting MQTT wifiConnection...");
                 String clientId = "ESP8266Client-";
                 clientId += String(random(0xffff), HEX);
                 if (client.connect(clientId.c_str())) {
                         Serial.println("connected");
-                        client.subscribe("/smarthouse/temp/state");
-                        client.subscribe("/smarthouse/light/state");
+                        subscribeToTopics();
                 } else {
                         Serial.print("failed, rc=");
                         Serial.print(client.state());
@@ -33,23 +44,12 @@ void reconnectmqttserver() {
         }
 }
 
-
-void callback(char* topic, byte* payload, unsigned int length) {
-        String MQTT_DATA = "";
-        for (int i=0; i<length; i++) {
-                MQTT_DATA += (char)payload[i];
-        }
-        Serial.println("message received from topic: " + MQTT_DATA + ", Topic:  " + topic);
-        sendMessage(topic + ' ' + MQTT_DATA);
+void subscribeToTopics(){
+  client.subscribe("/smarthouse/temp/state");
+  client.subscribe("/smarthouse/light/state");
 }
 
-void setup(){
-
-        Serial.begin(9600);
-        unoMessage.begin(4800);
-        pinMode(D2,INPUT);
-        pinMode(D3,OUTPUT);
-        pinMode(D7, OUTPUT);
+void wifiConnect(){
         WiFi.disconnect();
         delay(3000);
         Serial.println("START");
@@ -57,61 +57,93 @@ void setup(){
         while ((!(WiFi.status() == WL_CONNECTED))) {
                 delay(300);
                 Serial.print("..");
-
         }
-        Serial.println("Connected");
+        
+        Serial.println("wifiConnected");
         Serial.println("Your IP is");
         Serial.println((WiFi.localIP().toString()));
-        client.setServer( "192.168.43.109", 1883);
+        client.setServer( ipAddress, port);
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+        String MQTT_DATA;
+        for (int i=0; i<length; i++) {
+                MQTT_DATA += (char)payload[i];
+        }
+        Serial.println("message received from topic: " + MQTT_DATA + ", Topic:  " + topic);
+        delay(50);
+        sendToArduino(topic, MQTT_DATA);
+}
+
+
+
+void pinSetup(){
+      
+   
+}
+
+void sendToArduino(char* topic, String message){
+          char charArr[50];
+          message.toCharArray(charArr, 50);
+      
+        unoMessager.write(topic);
+        unoMessager.write(' ');
+        unoMessager.write(charArr);
+        unoMessager.write('\n');
+}
+
+char** receivedArduinoMessage(){
+        char part;
+        char* message = "";
+        char* topic = "";
+        bool topicDone  = false;
+        while(unoMessager.available()) {
+                part = ((char)unoMessager.read());
+                if (part == ' ')
+                        topicDone = true;
+                else if(part == '\n' || message != "")
+                        break;
+
+                if(topicDone)
+                        topic += part;
+                else
+                        message += part;
+
+                delay(50);
+        }
+        char** returnArray;
+        returnArray[0] = topic;
+        returnArray[1] =  message;
+        return returnArray;
+}
+
+void sendToMQTT(char** topicAndMessageFromArduino){
+        char* topic = topicAndMessageFromArduino[0];
+        char* message = topicAndMessageFromArduino[1];
+        client.publish(topic, message);
+}
+
+void setup(){
+
+        Serial.begin(9600);
+        unoMessager.begin(4800);
+        pinSetup();
+        wifiConnect();
         client.setCallback(callback);
 
-}
-
-void sendMessage(String message){
-        char charArray[50];
-        message.toCharArray(charArray, 49);
-        unoMessage.write(charArray);
-        unoMessage.write('\n');
-}
-
-String receivedArduinoMessage(){
-        char part;
-        String message= "";
-        while(unoMessage.available()) {
-                part = ((char)unoMessage.read());
-                if(part != '\n') {
-                        message += part;
-                }else if(message != "")
-                        break;
-                delay(50);
-
-        }
-        return message;
-}
-
-void unoMessageHandler(String arduinoData){
-        Serial.println(arduinoData);
-}
-void publishMqtt(String topic, String message){
-        char messageCharArray[50];
-        message.toCharArray(messageCharArray, 50);
-        char topicCharArray[50];
-        topic.toCharArray(topicCharArray, 50);
-        client.publish(topicCharArray, messageCharArray);
 }
 
 void loop()
 {
 
-        if (!client.connected()) {
-                reconnectmqttserver();
-        }
-        client.loop();
-        snprintf (msgmqtt, 50, message.c_str());
-        publishMqtt("Topic", "MQTT_message");
-        delay(5000);
-        if(unoMessage.available())
-                unoMessageHandler(receivedArduinoMessage());
+        if (!client.connected())
+                reconnectMqttServer();
 
+        client.loop();
+
+        
+//        snprintf (msgmqtt, 50, message.c_str());
+        if(unoMessager.available())
+                sendToMQTT(receivedArduinoMessage());
 
 }

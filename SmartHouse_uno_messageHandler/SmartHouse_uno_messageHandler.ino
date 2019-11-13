@@ -1,57 +1,82 @@
 #include <SoftwareSerial.h>
-SoftwareSerial wifiMessage(0,1);
-bool waitingMsg = false;
-int messageSent = 0;
+SoftwareSerial wifiMessage(2,3);
+
+
+/*  Pin variables   */
 int pin1 = 8;
 int pin2 = 11;
 int pin3 = 12;
 int pin4 = 13;
 int fanPin = 13;
 
+/*  general variables */
+bool waitingMsg = false;
+int messageSent = 0;
 
-void sendMessage(String message){
 
-        char charArray[50];
-        message.toCharArray(charArray, 49);
-        wifiMessage.write(charArray);
+void sendToWifiModule(char* topic, char* message){   
+        wifiMessage.write(topic);
+        wifiMessage.write(' ');
+        wifiMessage.write(message);
         wifiMessage.write('\n');
 }
+void sendToWifiModule(String topic, String message){   
 
-void messageHandler(String returnedMessage) {
-        if(returnedMessage.equals("ON")) {
-                turnOnLight();
-                digitalWrite(fanPin, HIGH);
-                Serial.println(returnedMessage);
-        }else if(returnedMessage.equals("OFF")) {
-                turnOffLight();
-                digitalWrite(fanPin, LOW);
+        char topicArr[topic.length()];
+        char messageArr[message.length()];
+        topic.toCharArray(topicArr, topic.length());
+        message.toCharArray(messageArr, message.length());        
+        wifiMessage.write(topicArr);
+        wifiMessage.write(' ');
+        wifiMessage.write(messageArr);
+        wifiMessage.write('\n');
+}
+void messageHandler(String topic, String message) {  
+        
+        if(topic == "/smarthouse/temp/state"){
+          if(message == "get"){
+            Serial.println("will send temp");
+          }
+        }else if(topic == "/smarthouse/light/state"){
+          if(message == "true"){
+            Serial.println("Turning on light");
+          }else if(message == "false"){
+            Serial.println("Turning off light");
+          }
         }
+        
 }
 
-String* receivedTopicAndMessage(){
-        char part;
-        String message = "";
-        String topic = "";
-        bool topicDone  = false;
-        while(wifiMessage.available()) {
+String getWifiMessage(){
+  String message = "";
+  char part = "";
+  while(wifiMessage.available()) {
                 part = ((char)wifiMessage.read());
-
-                if (part == ' ')
-                        topicDone = true;
-                else if(part == '\n' || message != "")
-                        break;
-
-                if(topicDone)
-                        topic += part;
-                else
-                        message += part;
-
-                delay(50);
+                if(part == '\n')
+                        break; 
+                message += part;
+                delay(5);
         }
-        String* returnArray;
-        returnArray[0] = topic;
-        returnArray[1] =  message;
-        return returnArray;
+        
+        Serial.println("received: " + message);
+        return message;
+}
+
+ String getSubstring(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 void turnOnLight(){
@@ -66,29 +91,41 @@ void turnOffLight(){
         digitalWrite(pin3, HIGH);
         digitalWrite(pin4, HIGH);
 }
-
-void setup(){
-
+void pinSetup(){
         pinMode(pin1, OUTPUT);
         pinMode(pin2, OUTPUT);
         pinMode(pin3, OUTPUT);
         pinMode(pin4, OUTPUT);
         pinMode(fanPin, OUTPUT);
+}
 
+void setup(){
+
+        pinSetup();
+        
         turnOffLight();
 
         Serial.begin(9600);
         wifiMessage.begin(4800);
+        Serial.println("Connection sucessful");
 
 }
 
 void loop(){
 
+ if (wifiMessage.available()){
+    //Serial.println(getWifiMessage());
+    String receivedData = getWifiMessage();
+    
+    String topic = getSubstring(receivedData, ' ', 0);
+    String message = getSubstring(receivedData, ' ', 1);
+    messageHandler(topic, message);
+ }
 
-        if(wifiMessage.available()) {
-          String* topicAndMessage = receivedTopicAndMessage();
 
-                messageHandler(topicAndMessage[0]+ " " + topicAndMessage[1]);
-
-        }
+  //  Serial.write(wifiMessage.read());
+    
+      //  if(wifiMessage.available()) 
+       //         messageHandler(receivedTopicAndMessage());
+        
 }
