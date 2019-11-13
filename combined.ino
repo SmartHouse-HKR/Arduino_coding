@@ -328,27 +328,27 @@ void timer2Off(){
 
 
 void windowOn(){
-  Serial.print("window on");
+  Serial.println("window on");
 }
 void windowOff(){
-  Serial.print("window Off");
+  Serial.println("window Off");
 }
 
 void fireOn(){
-  Serial.print("fire on");
+  Serial.println("fire on");
 }
 void fireOff(){
-  Serial.print("fire Off");
+  Serial.println("fire Off");
 }
 void stoveOn(){
-  Serial.print("stove on");
+  Serial.println("stove on");
 }
 void stoveOff(){
-  Serial.print("stove Off");
+  Serial.println("stove Off");
 }
 void waterOn(){
-  Serial.print("water on");
+  Serial.println("water on");
 }
 void waterOff(){
-  Serial.print("water Off");
+  Serial.println("water Off");
 }
