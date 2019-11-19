@@ -1,8 +1,13 @@
+#include <SoftwareSerial.h>
+SoftwareSerial wifiMessage(0,1);
+
+// Analog pin setup
 int elecConsumption = A0;
 int tempFirstSens = A1;
 int tempSecondSens = A2;
 int lightSensor = A3;
 
+// Digital pin setup
 const byte fireAlarmSwitch = 2;
 const byte burglarAlarmSensor = 3;
 const byte waterLeakSwitch = 4; 
@@ -12,6 +17,7 @@ const byte powerCut = 7;
 const byte tempSensorOutside = 9;
 const byte fan = 10;
 
+// Variables setup
 int readingWindow;
 int readingFire;
 int readingStove;
@@ -22,16 +28,16 @@ int readingStoveLast=0;
 int readingWaterLast=0;
 
 int doorValue;
-int doorValueLast
+int doorValueLast;
 
 char rx_byte = 0;
 int sensorValue = 0;
 
-volatile boolean burglarArmInterrupt;
-volatile boolean fireAlarmInterrupt;
-
 float tempAirFirst;
 float tempAirSecond; 
+
+bool waitingMsg = false;
+int messageSent = 0;
 
 void setup() {
  
@@ -51,6 +57,10 @@ void setup() {
 
   Serial.begin(9600);
 
+  wifiMessage.begin(4800);
+  
+  Serial.println("Connection sucessful");
+
 }  
 
 void loop() {  
@@ -58,6 +68,14 @@ void loop() {
   if(Serial.available()  > 0){
     rx_byte = Serial.read();
   } 
+
+//___WiFi setup___
+  if (wifiMessage.available()){
+    String receivedData = getWifiMessage();
+    String topic = getSubstring(receivedData, ' ', 0);
+    String message = getSubstring(receivedData, ' ', 1);
+    messageHandler(topic, message);
+    }     
 
 //___Switches___  
 
@@ -233,6 +251,85 @@ void loop() {
 //  Serial.print("Voltage: "); 
 //  Serial.println(voltage);
 
+}
+
+//___ Outside the Loop___
+
+void sendToWifiModule(char* topic, char* message){
+  wifiMessage.write(topic);
+  wifiMessage.write(' ');
+  wifiMessage.write(message);
+  wifiMessage.write('\n');
+}
+
+void sendToWifiModule(String topic, String message){   
+  char topicArr[topic.length()];
+  char messageArr[message.length()];
+  topic.toCharArray(topicArr, topic.length());
+  message.toCharArray(messageArr, message.length());        
+  wifiMessage.write(topicArr);
+  wifiMessage.write(' ');
+  wifiMessage.write(messageArr);
+  wifiMessage.write('\n');
+}
+
+void messageHandler(String topic, String message) {
+        //get temp? from what sensor??
+        if(topic == "/smarthouse/temp/state"){
+          if(message == "get"){
+            Serial.println("will send temp");
+          }
+        }
+        
+        //indoor lights on or off
+        else if(topic == "Smarthome/livingRoom/livingRoomLamp"){
+          if(message == "true"){
+            indoorLightOn();
+          }else if(message == "false"){
+            indoorLightOff();
+          }
+        }
+
+        //indoor lights on or off
+        else if(topic == "Smarthome/livingRoom/heater"){
+          if(message == "true"){
+            heatingRoomOn();
+          }else if(message == "false"){
+            heatingRoomOff();
+          }
+        }
+        
+}
+
+String getWifiMessage(){
+        String message = "";
+        char part = "";
+        while(wifiMessage.available()) {
+                part = ((char)wifiMessage.read());
+                if(part == '\n')
+                        break; 
+                message += part;
+                delay(5);
+        }
+        
+        Serial.println("received: " + message);
+        return message;
+}
+
+String getSubstring(String data, char separator, int index) {
+        int found = 0;
+        int strIndex[] = {0, -1};
+        int maxIndex = data.length()-1;
+
+        for(int i=0; i<=maxIndex && found<=index; i++){
+            if(data.charAt(i)==separator || i==maxIndex){
+              found++;
+              strIndex[0] = strIndex[1]+1;
+              strIndex[1] = (i == maxIndex) ? i+1 : i;
+            }
+        }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 void alarmOff(){
