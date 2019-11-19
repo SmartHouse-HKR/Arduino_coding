@@ -302,7 +302,7 @@ void heatingElementTwoOn(){
 void indoorLightOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
-   digitalWrite(12, LOW); 
+   digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
    delay(10);
 }    
