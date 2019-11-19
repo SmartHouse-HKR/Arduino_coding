@@ -12,6 +12,18 @@ const byte powerCut = 7;
 const byte tempSensorOutside = 9;
 const byte fan = 10;
 
+int readingWindow;
+int readingFire;
+int readingStove;
+int readingWater;
+int readingWindowLast=0;
+int readingFireLast=0;
+int readingStoveLast=0;
+int readingWaterLast=0;
+
+int doorValue;
+int doorValueLast
+
 char rx_byte = 0;
 int sensorValue = 0;
 
@@ -37,12 +49,6 @@ void setup() {
   pinMode(12, OUTPUT); //MUX3
   pinMode(13, OUTPUT); //MUX4
 
-  attachInterrupt(digitalPinToInterrupt(fireAlarmSwitch), alarmOnSubRoutine, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(burglarAlarmSensor), burglarsAfoot, FALLING);
-
-  digitalWrite(fireAlarmSwitch, LOW);
-  digitalWrite(burglarAlarmSensor, HIGH);
-
   Serial.begin(9600);
 
 }  
@@ -51,7 +57,55 @@ void loop() {
 
   if(Serial.available()  > 0){
     rx_byte = Serial.read();
-  }
+  } 
+
+//___Switches___  
+
+  readingWindow=digitalRead(windowOpenSwitch);
+  readingFire=digitalRead(fireAlarmSwitch);
+  readingStove=digitalRead(ovenSwitch);
+  readingWater=digitalRead(waterLeakSwitch);
+  
+/*  if(readingWindowLast != readingWindow){
+    if(readingWindow == 1){
+     
+         }
+    if(readingWindow == 0){
+          
+        }
+        readingWindowLast=readingWindow;
+        }
+        
+  if(readingFireLast != readingFire){
+    if(readingFire == 1){
+      
+      }
+      if(readingFire == 0){
+          
+        }
+        readingFireLast=readingFire;
+
+        }
+
+  if(readingStoveLast != readingStove){
+    if(readingStove == 1){
+          
+        }if(readingStove == 0){
+          
+        }
+        readingStoveLast=readingStove;
+        }
+
+  if(readingWaterLast != readingWater){
+    if(readingWater == 1){
+          
+        }if(readingWater == 0){
+          
+        }
+         readingWaterLast=readingWater;
+        }  
+*/
+
   
 //___ Lights ___
 
@@ -77,11 +131,18 @@ void loop() {
   
 //___ Alarms ___
 
- if(fireAlarmInterrupt){
-alarmOn();
-    }else {
-      alarmOff();
-      }
+  doorValue=digitalRead(burglarAlarmSensor);
+  Serial.println(doorValue);
+  if(doorValue != doorValueLast){
+        if(doorValue == 0){
+          alarmOn();
+          burglarAlarmLampOn();
+        }if(doorValue == 1){
+          alarmOff();
+          burglarAlarmLampOff();
+        }
+        doorValueLast=doorValue;
+        }
 
   if(rx_byte == '5'){
     alarmOn();
@@ -179,6 +240,7 @@ void alarmOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+   delay(10);
 }
  
 void alarmOn(){
@@ -186,6 +248,7 @@ void alarmOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
+   delay(10);
 }
  
 void burglarAlarmLampOff(){
@@ -193,6 +256,7 @@ void burglarAlarmLampOff(){
    digitalWrite(11, HIGH ); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW ); 
+   delay(10);
 }
     
 void burglarAlarmLampOn(){
@@ -200,6 +264,7 @@ void burglarAlarmLampOn(){
    digitalWrite(11, HIGH ); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW ); 
+   delay(10);
 }    
  
 void heatingElementOneOff(){
@@ -207,6 +272,7 @@ void heatingElementOneOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }    
 
 void heatingElementOneOn(){
@@ -214,6 +280,7 @@ void heatingElementOneOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }
  
 void heatingElementTwoOff(){
@@ -221,6 +288,7 @@ void heatingElementTwoOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }
     
 void heatingElementTwoOn(){
@@ -228,6 +296,7 @@ void heatingElementTwoOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }    
 
 void indoorLightOff(){
@@ -235,6 +304,7 @@ void indoorLightOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+   delay(10);
 }    
  
 void indoorLightOn(){
@@ -242,6 +312,7 @@ void indoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+   delay(10);
 }    
  
 void outdoorLightOff(){
@@ -249,6 +320,7 @@ void outdoorLightOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }    
  
 void outdoorLightOn(){
@@ -256,42 +328,37 @@ void outdoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
+   delay(10);
 }
     
 void timerOneOff(){
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
-   digitalWrite(12, HIGH); 
+   digitalWrite(13, HIGH); 
+   delay(10);
 }
     
 void timerOneOn(){
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
-   digitalWrite(12, HIGH);
+   digitalWrite(13, HIGH);
+   delay(10);
 }
     
 void timerTwoOff(){
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
-   digitalWrite(12, LOW); 
+   digitalWrite(13, LOW); 
+   delay(10);
 }    
 
 void timerTwoOn(){
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
-   digitalWrite(12, LOW); 
-}
- 
-void alarmOnSubRoutine(){
-  fireAlarmInterrupt = !fireAlarmInterrupt;
-}
-
-
-void burglarsAfoot(){
-  alarmOn();
-  burglarAlarmLampOn();
+   digitalWrite(13, LOW); 
+   delay(10);
 }
