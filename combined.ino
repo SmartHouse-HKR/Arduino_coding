@@ -1,3 +1,5 @@
+#include <SMT160.h>
+
 int window=6;
 int fire=2;
 int stove=5;
@@ -35,10 +37,20 @@ int sensorValue = 0;
 char rx_byte = 0;
 
 
+boolean timerBlinking=false;
+
+
+//digital timer variables
+SMT160 smt160;
+
+
+
 
 
 
 void setup() {
+ 
+  
   
 pinMode(window, INPUT);
 pinMode(fire, INPUT);
@@ -52,14 +64,39 @@ pinMode(mux1, OUTPUT);
   pinMode(door, INPUT);
 
 
+   //Digital temp sensor setup
+
+
+
 Serial.begin(9600);
 }
 
 void loop() {
+
+//digital thermometer 
+int temp = smt160.getTemp(9);
+  // if sensor faile getTemp return 0xffff
+  if(temp != 0xffff)
+    Serial.println(temp/100);
+
+   
+
+  //digital thermometer end
+
+  
   readingWindow=digitalRead(window);
   readingFire=digitalRead(fire);
   readingStove=digitalRead(stove);
   readingWater=digitalRead(water);
+
+//timer for switch use
+if(timerBlinking == true){
+  timer1blink();
+}else{
+  timer1();
+}
+
+  
 
 //doorStart
  doorValue=digitalRead(door);
@@ -83,6 +120,8 @@ if(readingWindowLast != readingWindow){
           windowOff();
         }
         readingWindowLast=readingWindow;
+          timerBlinking=true;
+
         }
 
         if(readingFireLast != readingFire){
@@ -197,6 +236,7 @@ sensorValue = analogRead(ldrSensor); // read the value from the sensor
   
 
  //LDR sensor end
+rx_byte=0;
         
 }
 
@@ -302,6 +342,19 @@ void timer1(){
   digitalWrite(mux2, HIGH);
   digitalWrite(mux3, LOW);
   digitalWrite(mux4, LOW);
+  
+}
+void timer1blink(){
+  digitalWrite(mux1, LOW);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+  delay(100);
+  digitalWrite(mux1, HIGH);
+  digitalWrite(mux2, HIGH);
+  digitalWrite(mux3, LOW);
+  digitalWrite(mux4, LOW);
+  delay(100);
   
 }
 void timer1Off(){
