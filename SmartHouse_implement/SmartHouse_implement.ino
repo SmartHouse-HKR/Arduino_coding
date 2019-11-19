@@ -1,3 +1,4 @@
+#include <SMT160.h>
 #include <SoftwareSerial.h>
 SoftwareSerial wifiMessage(0,1);
 
@@ -38,6 +39,8 @@ float tempAirSecond;
 
 bool waitingMsg = false;
 int messageSent = 0;
+
+SMT160 smt160;
 
 void setup() {
  
@@ -203,6 +206,14 @@ void loop() {
   heatingElementTwoOff();
  }
 */ 
+
+//digital thermometer 
+  int temp = smt160.getTemp(tempSensorOutside);
+// if sensor failed getTemp return 0xffff
+  if(temp != 0xffff){
+    Serial.println(temp/100);
+  }
+  
   if(rx_byte == '9'){
     heatingElementOneOn();
   }
@@ -239,12 +250,13 @@ void loop() {
 
 //___ Fan ___
 
-  digitalWrite(fan, HIGH);
+/*  digitalWrite(fan, HIGH);
   delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
   digitalWrite(fan, LOW);
   delayMicroseconds(1000 - 500);
+*/
 
-// ___ Volatge ___
+//___ Volatge ___
 
   int sensorValue = analogRead(elecConsumption);
   float voltage = sensorValue * (5.0 / 1023.0);
@@ -274,31 +286,44 @@ void sendToWifiModule(String topic, String message){
 }
 
 void messageHandler(String topic, String message) {
-        //get temp? from what sensor??
-        if(topic == "/smarthouse/temp/state"){
-          if(message == "get"){
-            Serial.println("will send temp");
-          }
-        }
+//get temp? from what sensor??
+  if(topic == "/smarthouse/temp/state"){
+    if(message == "get"){
+      Serial.println("will send temp");
+      }
+    }
         
-        //indoor lights on or off
-        else if(topic == "Smarthome/livingRoom/livingRoomLamp"){
-          if(message == "true"){
-            indoorLightOn();
-          }else if(message == "false"){
-            indoorLightOff();
-          }
+//indoor lights on or off
+  else if(topic == "Smarthome/livingRoom/livingRoomLamp"){
+    if(message == "true"){
+      indoorLightOn();
+      }
+      else if(message == "false"){
+        indoorLightOff();
         }
+      }
 
-        //indoor lights on or off
-        else if(topic == "Smarthome/livingRoom/heater"){
-          if(message == "true"){
-            heatingRoomOn();
-          }else if(message == "false"){
-            heatingRoomOff();
-          }
+//Outdoor light on or off    
+  else if(topic == "Smarthome/outside/outsideSecuirtyLight"){
+    if(message == "true"){
+      outdoorLightOn();
+      }
+      else if(message == "false"){
+        outdoorLightOff();
         }
-        
+      }  
+
+//Heater one on or off
+  else if(topic == "Smarthome/livingRoom/heater"){
+    if(message == "true"){
+      heatingElementOneOn();
+      }
+      else if(message == "false"){
+        heatingElementOneOff();
+        }
+      }    
+
+
 }
 
 String getWifiMessage(){
