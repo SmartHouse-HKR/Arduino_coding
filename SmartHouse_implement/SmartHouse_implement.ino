@@ -187,17 +187,20 @@ void loop() {
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
   tempAirFirst =  tempAirFirst / 10;
 
-/* if (tempAirFirst < 15.00){
-  heatingElementOneOn();
+  if (tempAirFirst < ){
+  heatingElementTwoOn();
  }
- else if(tempAirFirst > 20.00){
-  heatingElementOneOff();
+ else if(tempAirSecond > 20.00){
+  heatingElementTwoOff();
  }
-*/
+*/ 
 
- tempAirSecond = analogRead(tempSecondSens);
- tempAirSecond = (tempAirSecond / 1024.0)*5000;
- tempAirSecond =  tempAirSecond / 10;
+
+  
+
+  tempAirSecond = analogRead(tempSecondSens);
+  tempAirSecond = (tempAirSecond / 1024.0)*5000;
+  tempAirSecond =  tempAirSecond / 10;
   
 /*if (tempAirSecond < 15.00){
   heatingElementTwoOn();
@@ -267,22 +270,21 @@ void loop() {
 
 //___ Outside the Loop___
 
-void sendToWifiModule(char* topic, char* message){
-  wifiMessage.write(topic);
-  wifiMessage.write(' ');
-  wifiMessage.write(message);
-  wifiMessage.write('\n');
-}
+void sendToWifiModule(String topic, String message){
 
-void sendToWifiModule(String topic, String message){   
-  char topicArr[topic.length()];
-  char messageArr[message.length()];
-  topic.toCharArray(topicArr, topic.length());
-  message.toCharArray(messageArr, message.length());        
-  wifiMessage.write(topicArr);
+  char* messageArray = (char*) malloc(sizeof(char)*message.length()+1);
+  char* topicArray = (char*) malloc(sizeof(char)*topic.length()+1);
+  message.toCharArray(messageArray, message.length()+1);
+  topic.toCharArray(topicArray, topic.length()+1);
+
+  wifiMessage.write(topicArray);
   wifiMessage.write(' ');
-  wifiMessage.write(messageArr);
+  wifiMessage.write(messageArray);
   wifiMessage.write('\n');
+
+  Serial.println("sent to wifi module: " + ((String)topicArray) + " " + ((String)messageArray));
+  free(topicArray);
+  free(messageArray);
 }
 
 void messageHandler(String topic, String message) {
@@ -294,7 +296,7 @@ void messageHandler(String topic, String message) {
     }
         
 //indoor lights on or off
-  else if(topic == "Smarthome/livingRoom/livingRoomLamp"){
+  else if(topic == "smarthouse/indoor_light/state"){
     if(message == "true"){
       indoorLightOn();
       }
@@ -304,7 +306,7 @@ void messageHandler(String topic, String message) {
       }
 
 //Outdoor light on or off    
-  else if(topic == "Smarthome/outside/outsideSecuirtyLight"){
+  else if(topic == "smarthouse/outdoor_light/state"){
     if(message == "true"){
       outdoorLightOn();
       }
@@ -313,15 +315,44 @@ void messageHandler(String topic, String message) {
         }
       }  
 
-//Heater one on or off
+//Heater one
   else if(topic == "Smarthome/livingRoom/heater"){
-    if(message == "true"){
+/*    if(message == "true"){
       heatingElementOneOn();
       }
       else if(message == "false"){
         heatingElementOneOff();
         }
-      }    
+*/      }    
+
+//___ Fan ___
+
+  else if(topic == "smarthouse/fan/speed"){
+    if(message == "0"){
+      digitalWrite(fan, LOW);
+      }
+      else if(message == "50"){
+        digitalWrite(fan, HIGH);
+        delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
+        digitalWrite(fan, LOW);
+        delayMicroseconds(1000 - 500);
+        }
+        else if(message == "75"){
+        digitalWrite(fan, HIGH);
+        delayMicroseconds(750); // Approximately 75% duty cycle @ 1KHz
+        digitalWrite(fan, LOW);
+        delayMicroseconds(1000 - 750);
+        }
+        else if(message == "100"){
+        digitalWrite(fan, HIGH);
+        }  
+  }
+  
+/*  digitalWrite(fan, HIGH);
+  delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
+  digitalWrite(fan, LOW);
+  delayMicroseconds(1000 - 500);
+*/
 
 
 }
