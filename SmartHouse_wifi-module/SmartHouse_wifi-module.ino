@@ -12,11 +12,30 @@ String networkPassword = "12345678";
 char* ipAddress = "192.168.43.99";
 uint16_t port = 1883;
 
-char* toCharArr(String string){
-  
-        char charArr[50];
-        string.toCharArray(charArr, 50);
-        return charArr;
+void setup(){
+
+        Serial.begin(9600);
+        unoMessager.begin(4800);
+        wifiConnect();
+        client.setCallback(callback);
+}
+
+void loop(){
+
+        if (!client.connected())
+                reconnectMqttServer();
+
+
+        client.loop();
+
+        if(unoMessager.available()) {
+                Serial.println("message from arduino available");
+                String receivedData = receivedArduinoMessage();
+                String topic = getSubstring(receivedData, ' ', 0);
+                String message = getSubstring(receivedData, ' ', 1);
+                Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
+                sendToMQTT(topic, message);
+        }
 }
 
 void reconnectMqttServer() {
@@ -120,30 +139,4 @@ void sendToMQTT(String topic,String message){
         char messageCharArray[50];
         message.toCharArray(messageCharArray,50);
         client.publish(topicCharArray, messageCharArray);
-}
-
-void setup(){
-
-        Serial.begin(9600);
-        unoMessager.begin(4800);
-        pinSetup();
-        wifiConnect();
-        client.setCallback(callback);
-}
-
-void loop(){
-
-        if (!client.connected())
-                reconnectMqttServer();
-
-        client.loop();
-
-        if(unoMessager.available()) {
-                Serial.println("message from arduino available");
-                String receivedData = receivedArduinoMessage();
-                String topic = getSubstring(receivedData, ' ', 0);
-                String message = getSubstring(receivedData, ' ', 1);
-                Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
-                sendToMQTT(topic, message);
-        }
 }
