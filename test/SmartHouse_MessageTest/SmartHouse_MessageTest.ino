@@ -89,6 +89,7 @@ void loop() {
   
   if(readingWindowLast != readingWindow){
     if(readingWindow == 1){
+      
       sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
       burglarAlarmLampOn();
       alarmOn();
@@ -136,7 +137,9 @@ void loop() {
 //___ Lights ___
 
   sensorValue = analogRead(lightSensor);
-  if(sensorValue < 300)
+  if(sensorValue < 300){
+  outdoorLightOn();
+  }
 
   if(rx_byte == '1'){
     indoorLightOn();
@@ -186,7 +189,7 @@ void loop() {
   }
 
 //___ Heating ___
-
+/*
   tempAirFirst = analogRead(tempFirstSens);
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
   tempAirFirst =  tempAirFirst / 10;
@@ -213,6 +216,7 @@ void loop() {
   heatingElementTwoOff();
  }
 */ 
+
 
 //digital thermometer 
   int temp = smt160.getTemp(tempSensorOutside);
@@ -255,14 +259,6 @@ void loop() {
   timerTwoOff();
   }  
 
-//___ Fan ___
-
-/*  digitalWrite(fan, HIGH);
-  delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
-  digitalWrite(fan, LOW);
-  delayMicroseconds(1000 - 500);
-*/
-
 //___ Volatge ___
 
   int sensorValue = analogRead(elecConsumption);
@@ -270,243 +266,4 @@ void loop() {
 //  Serial.print("Voltage: "); 
 //  Serial.println(voltage);
 
-}
-
-//___ Outside the Loop___
-
-void sendToWifiModule(String topic, String message){
-
-  char* messageArray = (char*) malloc(sizeof(char)*message.length()+1);
-  char* topicArray = (char*) malloc(sizeof(char)*topic.length()+1);
-  message.toCharArray(messageArray, message.length()+1);
-  topic.toCharArray(topicArray, topic.length()+1);
-
-  wifiMessage.write(topicArray);
-  wifiMessage.write(' ');
-  wifiMessage.write(messageArray);
-  wifiMessage.write('\n');
-
-  Serial.println("sent to wifi module: " + ((String)topicArray) + " " + ((String)messageArray));
-  free(topicArray);
-  free(messageArray);
-}
-
-void messageHandler(String topic, String message) {
-  if(topic == "/smarthouse/temp/state"){
-    if(message == "get"){
-      Serial.println("will send temp");
-      }
-    }
-        
-//indoor lights on or off
-  else if(topic == "smarthouse/indoor_light/state"){
-    if(message == "true"){
-      indoorLightOn();
-      }
-      else if(message == "false"){
-        indoorLightOff();
-        }
-      }
-
-//Outdoor light on or off    
-  else if(topic == "smarthouse/outdoor_light/state"){
-    if(message == "true"){
-      outdoorLightOn();
-      }
-      else if(message == "false"){
-        outdoorLightOff();
-        }
-      }  
-
-//Heater one
-  else if(topic == "Smarthome/livingRoom/heater"){
-/*    if(message == "true"){
-      heatingElementOneOn();
-      }
-      else if(message == "false"){
-        heatingElementOneOff();
-        }
-*/      }    
-
-//___ Fan ___
-
-  else if(topic == "smarthouse/fan/speed"){
-    if(message == "0"){
-      digitalWrite(fan, LOW);
-      }
-      else if(message == "50"){
-        digitalWrite(fan, HIGH);
-        delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
-        digitalWrite(fan, LOW);
-        delayMicroseconds(1000 - 500);
-        }
-        else if(message == "75"){
-        digitalWrite(fan, HIGH);
-        delayMicroseconds(750); // Approximately 75% duty cycle @ 1KHz
-        digitalWrite(fan, LOW);
-        delayMicroseconds(1000 - 750);
-        }
-        else if(message == "100"){
-        digitalWrite(fan, HIGH);
-        }  
-  }
-}
-
-String getWifiMessage(){
-        String message = "";
-        char part = "";
-        while(wifiMessage.available()) {
-                part = ((char)wifiMessage.read());
-                if(part == '\n')
-                        break; 
-                message += part;
-                delay(5);
-        }
-        
-        Serial.println("received: " + message);
-        return message;
-}
-
-String getSubstring(String data, char separator, int index) {
-        int found = 0;
-        int strIndex[] = {0, -1};
-        int maxIndex = data.length()-1;
-
-        for(int i=0; i<=maxIndex && found<=index; i++){
-            if(data.charAt(i)==separator || i==maxIndex){
-              found++;
-              strIndex[0] = strIndex[1]+1;
-              strIndex[1] = (i == maxIndex) ? i+1 : i;
-            }
-        }
-
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-void alarmOff(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, LOW); 
-   delay(10);
-}
- 
-void alarmOn(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, LOW); 
-   delay(10);
-}
- 
-void burglarAlarmLampOff(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, HIGH ); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, LOW ); 
-   delay(10);
-}
-    
-void burglarAlarmLampOn(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, HIGH ); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, LOW ); 
-   delay(10);
-}    
- 
-void heatingElementOneOff(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}    
-
-void heatingElementOneOn(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}
- 
-void heatingElementTwoOff(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}
-    
-void heatingElementTwoOn(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}    
-
-void indoorLightOff(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, LOW); 
-   delay(10);
-}    
- 
-void indoorLightOn(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, LOW); 
-   delay(10);
-}    
- 
-void outdoorLightOff(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}    
- 
-void outdoorLightOn(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, HIGH); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}
-    
-void timerOneOff(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, HIGH); 
-   delay(10);
-}
-    
-void timerOneOn(){
-   digitalWrite(8, LOW); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, HIGH);
-   delay(10);
-}
-    
-void timerTwoOff(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, HIGH); 
-   digitalWrite(13, LOW); 
-   delay(10);
-}    
-
-void timerTwoOn(){
-   digitalWrite(8, HIGH); 
-   digitalWrite(11, LOW); 
-   digitalWrite(12, LOW); 
-   digitalWrite(13, LOW); 
-   delay(10);
 }
