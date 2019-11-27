@@ -20,23 +20,34 @@ void messageHandler(String topic, String message) {
     if(message == "true"){
       outdoorLightOn();
       }
-      else if(message == "false"){
+    else if(message == "false"){
         outdoorLightOff();
         }
       }  
 
-//Heater one
-  else if(topic == "Smarthome/livingRoom/heater"){
-/*    if(message == "true"){
-      heatingElementOneOn();
-      }
-      else if(message == "false"){
-        heatingElementOneOff();
-        }
-*/      }    
+//Heater One
+  else if (topic == "/smarthouse/heater_1/value" ){
+    heaterOneTemp = message.toInt();
+    }
+     
+  else if(topic == "/smarthouse/heater_1/state"){
+      isHeaterOneArmed =  stringToBoolean(message);
+    }
 
-//___ Fan ___
+//Heater Two     
+  else if (topic == "/smarthouse/heater_2/value" ){
+    heaterTwoTemp = message.toInt();
+    } 
+    
+  else if(topic == "/smarthouse/heater_2/state"){
+    isHeaterTwoArmed =  stringToBoolean(message);
+    }
+    
+  else if(topic == "/smarthouse/burglar_alarm/state"){
+    isBurglarAlarmArmed =  stringToBoolean(message);
+    }
 
+//Fan
   else if(topic == "smarthouse/fan/speed"){
     if(message == "0"){
       digitalWrite(fan, LOW);
@@ -56,17 +67,7 @@ void messageHandler(String topic, String message) {
         else if(message == "100"){
         digitalWrite(fan, HIGH);
         }  
-  } else if (topic == "/smarthouse/heater_1/value" ){
-       heaterOneTemp = message.toInt();
-  } else if(topic == "/smarthouse/heater_1/state"){
-    isHeaterOneArmed =  stringToBoolean(message);
-    } else if (topic == "/smarthouse/heater_2/value" ){
-       heaterTwoTemp = message.toInt();
-  } else if(topic == "/smarthouse/heater_2/state"){
-    isHeaterTwoArmed =  stringToBoolean(message);
-    } else if(topic == "/smarthouse/burglar_alarm/state"){
-    isBurglarAlarmArmed =  stringToBoolean(message);
-    }
+  } 
 }
 
 String getWifiMessage(){
@@ -92,3 +93,19 @@ boolean stringToBoolean(String message){
   
   return false;
   }
+
+String getSubstring(String data, char separator, int index) {
+        int found = 0;
+        int strIndex[] = {0, -1};
+        int maxIndex = data.length()-1;
+
+        for(int i=0; i<=maxIndex && found<=index; i++){
+            if(data.charAt(i)==separator || i==maxIndex){
+              found++;
+              strIndex[0] = strIndex[1]+1;
+              strIndex[1] = (i == maxIndex) ? i+1 : i;
+            }
+        }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}  

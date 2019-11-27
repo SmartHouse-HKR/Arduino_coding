@@ -154,24 +154,7 @@ void loop() {
   outdoorLightOn();
   }
 
-  if(rx_byte == '1'){
-    indoorLightOn();
-  }
-
-  if(rx_byte == '2'){
-    indoorLightOff();
-  }
-
-  if(rx_byte == '3'){
-    outdoorLightOn();
-  }
-
-  if(rx_byte == '4'){
-    outdoorLightOff();
-  }
-  
-//___ Alarms ___
-
+ //___ Alarms ___
 
 if(isBurglarALarmArmed){
   doorValue=digitalRead(burglarAlarmSensor);
@@ -188,122 +171,52 @@ if(isBurglarALarmArmed){
         }
 }
 
-  if(rx_byte == '5'){
-    alarmOn();
-  }
-
-  if(rx_byte == '6'){
-    alarmOff();
-  }
-
-  if(rx_byte == '7'){
-    burglarAlarmLampOn();
-  }
-
-  if(rx_byte == '8'){
-    burglarAlarmLampOff();
-  }
-
 //___ Heating ___
 
-if(isHeaterOneArmed){
-  if (tempAirFirst <= (heaterOneTemp - 3)){
-  heatingElementOneOn();
- }
- else if(tempAirFirst >= (heaterOneTemp + 3)){
-  heatingElementOneOff();
-  }
-}else {
-  heatingElementOneOff();
-  }
-
-
-  if(isHeaterTwoArmed){
-  if (tempAirSecond <= (heaterTwoTemp - 3)){
-  heatingElementTwoOn();
- }
- else if(tempAirSecond >= (heaterTwoTemp + 3)){
-  heatingElementTwoOff();
-  }
-}else {
-  heatingElementTwoOff();
-  }
-
-/*
   tempAirFirst = analogRead(tempFirstSens);
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
   tempAirFirst =  tempAirFirst / 10;
 
-  if (tempAirFirst < ){
-  heatingElementTwoOn();
- }
- else if(tempAirSecond > 20.00){
-  heatingElementTwoOff();
- }
-*/ 
-
-
-  
+  if(isHeaterOneArmed){
+    if (tempAirFirst <= (heaterOneTemp - 3)){
+      heatingElementOneOn();
+      }
+    else if(tempAirFirst >= (heaterOneTemp + 3)){
+      heatingElementOneOff();
+      }
+    }
+    else {
+      heatingElementOneOff();
+      }
 
   tempAirSecond = analogRead(tempSecondSens);
   tempAirSecond = (tempAirSecond / 1024.0)*5000;
   tempAirSecond =  tempAirSecond / 10;
-  
-/*if (tempAirSecond < 15.00){
-  heatingElementTwoOn();
- }
- else if(tempAirSecond > 20.00){
-  heatingElementTwoOff();
- }
-*/ 
 
+  if(isHeaterTwoArmed){
+    if (tempAirSecond <= (heaterTwoTemp - 3)){
+      heatingElementTwoOn();
+      }
+    else if(tempAirSecond >= (heaterTwoTemp + 3)){
+      heatingElementTwoOff();
+      }
+    }
+    else {
+      heatingElementTwoOff();
+      }
 
-//digital thermometer 
+//digital temp sensor
   int temp = smt160.getTemp(tempSensorOutside);
 // if sensor failed getTemp return 0xffff
   if(temp != 0xffff){
-    Serial.println(temp/100);
-  }
-  
-  if(rx_byte == '9'){
-    heatingElementOneOn();
-  }
-
-  if(rx_byte == '0'){
-    heatingElementOneOff();
-  }
-  
-  if(rx_byte == 'q'){
-    heatingElementTwoOn();
-  }
-  
-  if(rx_byte == 'w'){
-    heatingElementTwoOff();
-  }
-
-//___ Timers ___
-  
-  if(rx_byte == 'a'){
-    timerOneOn();
-  }
-  
-  if(rx_byte == 's'){
-  timerOneOff();
-  }
-
-  if(rx_byte == 'z'){
-  timerTwoOn();
-  }
-  
-  if(rx_byte == 'x'){
-  timerTwoOff();
-  }  
+    String extTemp =  String(temp/100);
+    sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp");    
+    }
 
 //___ Volatge ___
 
   int sensorValue = analogRead(elecConsumption);
-  float voltage = sensorValue * (5.0 / 1023.0);
-//  Serial.print("Voltage: "); 
-//  Serial.println(voltage);
-
+  String voltage =  String(sensorValue * (5.0 / 1023.0));
+  sendToWifiModule("/smarthouse/voltage/value", "voltage");
+  
 }

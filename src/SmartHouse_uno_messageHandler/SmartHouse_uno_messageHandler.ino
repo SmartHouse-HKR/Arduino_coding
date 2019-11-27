@@ -73,7 +73,7 @@ void messageHandler(String topic, String message) {
 
 String getWifiMessage(){
         String message = "";
-        char part = "";
+        char part = ' ';
         while(wifiMessage.available()) {
                 part = ((char)wifiMessage.read());
                 if(part == '\n')
