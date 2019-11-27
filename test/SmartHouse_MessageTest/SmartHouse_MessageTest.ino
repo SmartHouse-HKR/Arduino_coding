@@ -40,11 +40,20 @@ float tempAirSecond;
 bool waitingMsg = false;
 int messageSent = 0;
 
+
+// digital sensor
 SMT160 smt160;
 
-// heater guard variables
+// heater sentinel variables
+boolean isHeaterOneArmed = false;
+boolean isHeaterTwoArmed = false;
 int heaterOneTemp;
 int heaterTwoTemp;
+
+// alarm
+boolean isBurglarALarmArmed = true;
+// outdoor light
+boolean isOutdoorLightArmed = true;
 
 void setup() {
  
@@ -163,6 +172,8 @@ void loop() {
   
 //___ Alarms ___
 
+
+if(isBurglarALarmArmed){
   doorValue=digitalRead(burglarAlarmSensor);
   Serial.println(doorValue);
   if(doorValue != doorValueLast){
@@ -175,6 +186,7 @@ void loop() {
         }
         doorValueLast=doorValue;
         }
+}
 
   if(rx_byte == '5'){
     alarmOn();
@@ -193,6 +205,30 @@ void loop() {
   }
 
 //___ Heating ___
+
+if(isHeaterOneArmed){
+  if (tempAirFirst <= (heaterOneTemp - 3)){
+  heatingElementOneOn();
+ }
+ else if(tempAirFirst >= (heaterOneTemp + 3)){
+  heatingElementOneOff();
+  }
+}else {
+  heatingElementOneOff();
+  }
+
+
+  if(isHeaterTwoArmed){
+  if (tempAirSecond <= (heaterTwoTemp - 3)){
+  heatingElementTwoOn();
+ }
+ else if(tempAirSecond >= (heaterTwoTemp + 3)){
+  heatingElementTwoOff();
+  }
+}else {
+  heatingElementTwoOff();
+  }
+
 /*
   tempAirFirst = analogRead(tempFirstSens);
   tempAirFirst = (tempAirFirst / 1024.0)*5000;
@@ -266,8 +302,8 @@ void loop() {
 //___ Volatge ___
 
   int sensorValue = analogRead(elecConsumption);
-  String voltage = String(sensorValue * (5.0 / 1023.0));
-  sendToWifiModule("/smarthouse/voltage/value", "voltage");
-  delay(5000):
- 
+  float voltage = sensorValue * (5.0 / 1023.0);
+//  Serial.print("Voltage: "); 
+//  Serial.println(voltage);
+
 }

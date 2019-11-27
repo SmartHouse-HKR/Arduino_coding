@@ -27,11 +27,15 @@ void messageHandler(String topic, String message) {
 
 //Heater one
   else if(topic == "Smarthome/livingRoom/heater"){
+/*    if(message == "true"){
+      heatingElementOneOn();
+      }
+      else if(message == "false"){
+        heatingElementOneOff();
+        }
+*/      }    
 
-
-
-
-//Fan
+//___ Fan ___
 
   else if(topic == "smarthouse/fan/speed"){
     if(message == "0"){
@@ -53,8 +57,16 @@ void messageHandler(String topic, String message) {
         digitalWrite(fan, HIGH);
         }  
   } else if (topic == "/smarthouse/heater_1/value" ){
-heaterOneTemp = message.toInt();
-  }
+       heaterOneTemp = message.toInt();
+  } else if(topic == "/smarthouse/heater_1/state"){
+    isHeaterOneArmed =  stringToBoolean(message);
+    } else if (topic == "/smarthouse/heater_2/value" ){
+       heaterTwoTemp = message.toInt();
+  } else if(topic == "/smarthouse/heater_2/state"){
+    isHeaterTwoArmed =  stringToBoolean(message);
+    } else if(topic == "/smarthouse/burglar_alarm/state"){
+    isBurglarAlarmArmed =  stringToBoolean(message);
+    }
 }
 
 String getWifiMessage(){
@@ -71,3 +83,12 @@ String getWifiMessage(){
         Serial.println("received: " + message);
         return message;
 }
+
+boolean stringToBoolean(String message){
+  boolean returnVal = false; 
+  if(message == "on"){
+    retrunVal  = true;
+    }
+  
+  return false;
+  }
