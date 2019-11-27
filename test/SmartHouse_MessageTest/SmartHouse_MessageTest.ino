@@ -266,8 +266,8 @@ void loop() {
 //___ Volatge ___
 
   int sensorValue = analogRead(elecConsumption);
-  float voltage = sensorValue * (5.0 / 1023.0);
-//  Serial.print("Voltage: "); 
-//  Serial.println(voltage);
-
+  String voltage = String(sensorValue * (5.0 / 1023.0));
+  sendToWifiModule("/smarthouse/voltage/value", "voltage");
+  delay(5000):
+ 
 }

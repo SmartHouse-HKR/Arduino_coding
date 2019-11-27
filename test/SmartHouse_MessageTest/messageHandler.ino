@@ -27,15 +27,11 @@ void messageHandler(String topic, String message) {
 
 //Heater one
   else if(topic == "Smarthome/livingRoom/heater"){
-/*    if(message == "true"){
-      heatingElementOneOn();
-      }
-      else if(message == "false"){
-        heatingElementOneOff();
-        }
-*/      }    
 
-//___ Fan ___
+
+
+
+//Fan
 
   else if(topic == "smarthouse/fan/speed"){
     if(message == "0"){
