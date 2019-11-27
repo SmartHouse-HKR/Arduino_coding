@@ -309,6 +309,7 @@ void timer2Off(){
 //window switch on
 void windowOn(){
   Serial.println("window on");
+  sendToWifiModule("Smarthome/livingRoom/livingRoomWindowSensor", "true");
 }
 
 //window switch off
@@ -319,6 +320,7 @@ void windowOff(){
 //fire alarm switch on
 void fireOn(){
   Serial.println("fire on");
+  
 }
 
 //fire alarm switch off
