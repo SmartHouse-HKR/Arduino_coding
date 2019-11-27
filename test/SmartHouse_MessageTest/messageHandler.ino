@@ -56,5 +56,22 @@ void messageHandler(String topic, String message) {
         else if(message == "100"){
         digitalWrite(fan, HIGH);
         }  
-  } 
+  } else if (topic == "/smarthouse/heater_1/value" ){
+heaterOneTemp = message.toInt();
+  }
+}
+
+String getWifiMessage(){
+        String message = "";
+        char part = "";
+        while(wifiMessage.available()) {
+                part = ((char)wifiMessage.read());
+                if(part == '\n')
+                        break; 
+                message += part;
+                delay(5);
+        }
+        
+        Serial.println("received: " + message);
+        return message;
 }

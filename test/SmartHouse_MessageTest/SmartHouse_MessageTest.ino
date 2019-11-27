@@ -42,6 +42,10 @@ int messageSent = 0;
 
 SMT160 smt160;
 
+// heater guard variables
+int heaterOneTemp;
+int heaterTwoTemp;
+
 void setup() {
  
   pinMode(fireAlarmSwitch, INPUT);
@@ -89,6 +93,7 @@ void loop() {
   
   if(readingWindowLast != readingWindow){
     if(readingWindow == 1){
+      
       sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
       burglarAlarmLampOn();
       alarmOn();
@@ -134,7 +139,6 @@ void loop() {
     }  
   
 //___ Lights ___
-
 
   sensorValue = analogRead(lightSensor);
   if(sensorValue < 300){
@@ -267,5 +271,3 @@ void loop() {
 //  Serial.println(voltage);
 
 }
-
-//___ Outside the Loop___
