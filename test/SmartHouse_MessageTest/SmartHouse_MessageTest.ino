@@ -50,10 +50,12 @@ boolean isHeaterTwoArmed = false;
 int heaterOneTemp;
 int heaterTwoTemp;
 
-// alarm
-boolean isBurglarALarmArmed = true;
 // outdoor light
-boolean isOutdoorLightArmed = true;
+boolean isOutdoorLightArmed = false;
+
+// alarm
+boolean isBurglarAlarmArmed = true;
+
 
 void setup() {
  
@@ -149,10 +151,18 @@ void loop() {
   
 //___ Lights ___
 
-  sensorValue = analogRead(lightSensor);
-  if(sensorValue < 300){
-  outdoorLightOn();
-  }
+  if(isOutdoorLightArmed){
+    sensorValue = analogRead(lightSensor);
+      if(sensorValue < 300){
+      outdoorLightOn();
+      }
+    else{
+      outdoorLightOff()
+      }
+    }
+  else{
+    outdoorlightOff()
+    }
 
  //___ Alarms ___
 
@@ -218,5 +228,69 @@ if(isBurglarALarmArmed){
   int sensorValue = analogRead(elecConsumption);
   String voltage =  String(sensorValue * (5.0 / 1023.0));
   sendToWifiModule("/smarthouse/voltage/value", "voltage");
+
+if(rx_byte == '1'){
+    indoorLightOn();
+  }
+
+  if(rx_byte == '2'){
+    indoorLightOff();
+  }
+
+  if(rx_byte == '3'){
+    outdoorLightOn();
+  }
+
+  if(rx_byte == '4'){
+    outdoorLightOff();
+  }
+
+    if(rx_byte == '5'){
+    alarmOn();
+  }
+
+  if(rx_byte == '6'){
+    alarmOff();
+  }
+
+  if(rx_byte == '7'){
+    burglarAlarmLampOn();
+  }
+
+  if(rx_byte == '8'){
+    burglarAlarmLampOff();
+  }
+
+    if(rx_byte == '9'){
+    heatingElementOneOn();
+  }
+
+  if(rx_byte == '0'){
+    heatingElementOneOff();
+  }
+  
+  if(rx_byte == 'q'){
+    heatingElementTwoOn();
+  }
+  
+  if(rx_byte == 'w'){
+    heatingElementTwoOff();
+  }
+
+  if(rx_byte == 'a'){
+    timerOneOn();
+  }
+  
+  if(rx_byte == 's'){
+  timerOneOff();
+  }
+
+  if(rx_byte == 'z'){
+  timerTwoOn();
+  }
+  
+  if(rx_byte == 'x'){
+  timerTwoOff();
+  }  
   
 }

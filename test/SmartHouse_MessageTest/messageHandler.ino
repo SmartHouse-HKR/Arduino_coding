@@ -16,14 +16,8 @@ void messageHandler(String topic, String message) {
       }
 
 //Outdoor light on or off    
-  else if(topic == "smarthouse/outdoor_light/state"){
-    if(message == "true"){
-      outdoorLightOn();
-      }
-    else if(message == "false"){
-        outdoorLightOff();
-        }
-      }  
+   else if(topic == "/smarthouse/outdoor_light/state"){
+      isOutdoorLightArmed =  stringToBoolean(message);
 
 //Heater One
   else if (topic == "/smarthouse/heater_1/value" ){
