@@ -7,9 +7,9 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 /*  Connection variables  */
-String networkSSL = "masm";
-String networkPassword = "reperiendi";
-char* ipAddress = "192.168.0.102";
+String networkSSL = "dellema";
+String networkPassword = "aaaabbbb";
+char* ipAddress = "194.47.41.50";
 uint16_t port = 1883;
 
 char* toCharArr(String string){
