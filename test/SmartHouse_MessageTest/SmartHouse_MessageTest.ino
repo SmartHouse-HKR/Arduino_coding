@@ -57,6 +57,27 @@ boolean isOutdoorLightArmed = false;
 boolean isBurglarAlarmArmed = true;
 
 
+// fucntion prototypes
+String getWifiMessage(void);
+String getSubstring(String,char,int);
+void sendToWifiModule(String, String);
+void alarmOff(void);
+void alarmOn(void);
+void burglarAlarmLampOff(void); 
+void burglarAlarmLampOn(void);
+void heatingElementOneOn(void);
+void heatingElementOneOff(void);
+void heatingElementTwoOn(void);
+void heatingElementTwoOff(void);
+void indroorLightOn(void);
+void indroorLightOff(void);
+void outdoorLightOn(void);
+void outdoorLightOff(void);
+void timerOneOn(void);
+void timerOneOff(void);
+void timerTwoOn(void);
+void timerTwoOff(void);
+
 void setup() {
  
   pinMode(fireAlarmSwitch, INPUT);
@@ -157,16 +178,16 @@ void loop() {
       outdoorLightOn();
       }
     else{
-      outdoorLightOff()
+      outdoorLightOff();
       }
     }
   else{
-    outdoorlightOff()
+    outdoorLightOff();
     }
 
  //___ Alarms ___
 
-if(isBurglarALarmArmed){
+if(isBurglarAlarmArmed){
   doorValue=digitalRead(burglarAlarmSensor);
   Serial.println(doorValue);
   if(doorValue != doorValueLast){

@@ -1,3 +1,6 @@
+boolean stringToBoolean(String);
+
+
 void messageHandler(String topic, String message) {
   if(topic == "/smarthouse/temp/state"){
     if(message == "get"){
@@ -18,7 +21,7 @@ void messageHandler(String topic, String message) {
 //Outdoor light on or off    
    else if(topic == "/smarthouse/outdoor_light/state"){
       isOutdoorLightArmed =  stringToBoolean(message);
-
+   }
 //Heater One
   else if (topic == "/smarthouse/heater_1/value" ){
     heaterOneTemp = message.toInt();
@@ -79,16 +82,16 @@ String getWifiMessage(){
         return message;
 }
 
-boolean stringToBoolean(String message){
+boolean  stringToBoolean(String message){
   boolean returnVal = false; 
   if(message == "on"){
-    retrunVal  = true;
+    returnVal  = true;
     }
   
   return false;
   }
 
-String getSubstring(String data, char separator, int index) {
+String  getSubstring  (String data, char separator, int index) {
         int found = 0;
         int strIndex[] = {0, -1};
         int maxIndex = data.length()-1;
