@@ -3,7 +3,7 @@ void alarmOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }
  
 void alarmOn(){
@@ -11,7 +11,7 @@ void alarmOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }
  
 void burglarAlarmLampOff(){
@@ -19,7 +19,7 @@ void burglarAlarmLampOff(){
    digitalWrite(11, HIGH ); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW ); 
-   delay(10);
+//   delay(10);
 }
     
 void burglarAlarmLampOn(){
@@ -27,7 +27,7 @@ void burglarAlarmLampOn(){
    digitalWrite(11, HIGH ); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW ); 
-   delay(10);
+//   delay(10);
 }    
  
 void heatingElementOneOff(){
@@ -35,7 +35,7 @@ void heatingElementOneOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }    
 
 void heatingElementOneOn(){
@@ -43,7 +43,7 @@ void heatingElementOneOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }
  
 void heatingElementTwoOff(){
@@ -51,7 +51,7 @@ void heatingElementTwoOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }
     
 void heatingElementTwoOn(){
@@ -59,7 +59,7 @@ void heatingElementTwoOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }    
 
 void indoorLightOff(){
@@ -67,7 +67,7 @@ void indoorLightOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }    
  
 void indoorLightOn(){
@@ -75,7 +75,7 @@ void indoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }    
  
 void outdoorLightOff(){
@@ -83,7 +83,7 @@ void outdoorLightOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }    
  
 void outdoorLightOn(){
@@ -91,7 +91,7 @@ void outdoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }
     
 void timerOneOff(){
@@ -99,7 +99,7 @@ void timerOneOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-   delay(10);
+//   delay(10);
 }
     
 void timerOneOn(){
@@ -107,7 +107,7 @@ void timerOneOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH);
-   delay(10);
+//   delay(10);
 }
     
 void timerTwoOff(){
@@ -115,7 +115,7 @@ void timerTwoOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }    
 
 void timerTwoOn(){
@@ -123,5 +123,5 @@ void timerTwoOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
-   delay(10);
+//   delay(10);
 }

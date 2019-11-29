@@ -162,10 +162,10 @@ void loop() {
 
   if(readingWaterLast != readingWater){
     if(readingWater == 1){
-      sendToWifiModule("/smarthouse/oven/state", "true");
+      sendToWifiModule("/smarthouse/water_leak/trigger", "true");
       }
     if(readingWater == 0){
-      sendToWifiModule("/smarthouse/oven/state", "false");
+      sendToWifiModule("/smarthouse/water_leak/trigger", "false");
       }
     readingWaterLast=readingWater;
     }  
@@ -181,24 +181,21 @@ void loop() {
       outdoorLightOff();
       }
     }
-  else{
-    outdoorLightOff();
-    }
+//  else{
+//    outdoorLightOff();
+//    }
 
  //___ Alarms ___
 
-if(isBurglarAlarmArmed){
+  if(isBurglarAlarmArmed){
   doorValue=digitalRead(burglarAlarmSensor);
   Serial.println(doorValue);
-  if(doorValue != doorValueLast){
-        if(doorValue == 0){
+          if(doorValue == 0){
           alarmOn();
           burglarAlarmLampOn();
         }if(doorValue == 1){
           alarmOff();
           burglarAlarmLampOff();
-        }
-        doorValueLast=doorValue;
         }
 }
 
@@ -313,5 +310,5 @@ if(rx_byte == '1'){
   if(rx_byte == 'x'){
   timerTwoOff();
   }  
-  
+ 
 }
