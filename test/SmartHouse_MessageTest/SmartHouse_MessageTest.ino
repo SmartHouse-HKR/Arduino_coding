@@ -104,10 +104,10 @@ void setup() {
 
 void loop() {  
 
-//  if(Serial.available()){
-//    rx_byte = Serial.read();
-//    Serial.println(rx_byte);
-//  } 
+  if(Serial.available()){
+  rx_byte = Serial.read();
+  Serial.println(rx_byte);
+  } 
 
 //___WiFi setup___
   if (wifiMessage.available()){
@@ -125,8 +125,7 @@ void loop() {
   readingWater=digitalRead(waterLeakSwitch);
   
   if(readingWindowLast != readingWindow){
-    if(readingWindow == 1){
-      
+    if(readingWindow == 1){   
       sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
       burglarAlarmLampOn();
       alarmOn();
