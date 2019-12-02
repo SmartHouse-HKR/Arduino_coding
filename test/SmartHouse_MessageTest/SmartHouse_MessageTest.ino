@@ -1,4 +1,4 @@
-#include <SMT160.h>
+ #include <SMT160.h>
 #include <SoftwareSerial.h>
 SoftwareSerial wifiMessage(0,1);
 
@@ -51,7 +51,7 @@ int heaterOneTemp;
 int heaterTwoTemp;
 
 // outdoor light
-boolean isOutdoorLightArmed = false;
+boolean isOutdoorLightArmed = true;
 
 // alarm
 boolean isBurglarAlarmArmed = true;
@@ -104,8 +104,9 @@ void setup() {
 
 void loop() {  
 
-  if(Serial.available()  > 0){
+  if(Serial.available()){
     rx_byte = Serial.read();
+    Serial.println(rx_byte);
   } 
 
 //___WiFi setup___
@@ -162,10 +163,10 @@ void loop() {
 
   if(readingWaterLast != readingWater){
     if(readingWater == 1){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "true");
+      sendToWifiModule("/smarthouse/oven/state", "true");
       }
     if(readingWater == 0){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "false");
+      sendToWifiModule("/smarthouse/oven/state", "false");
       }
     readingWaterLast=readingWater;
     }  
@@ -174,22 +175,22 @@ void loop() {
 
   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
-      if(sensorValue < 300){
+    Serial.println(lightSensor);
+      if(sensorValue < 5){
       outdoorLightOn();
       }
     else{
       outdoorLightOff();
       }
     }
-//  else{
-//    outdoorLightOff();
-//    }
+  else{
+    outdoorLightOff();
+    }
 
  //___ Alarms ___
 
-  if(isBurglarAlarmArmed){
+if(isBurglarAlarmArmed){
   doorValue=digitalRead(burglarAlarmSensor);
-  Serial.println(doorValue);
           if(doorValue == 0){
           alarmOn();
           burglarAlarmLampOn();
@@ -197,7 +198,9 @@ void loop() {
           alarmOff();
           burglarAlarmLampOff();
         }
-}
+}else {
+  burglarAlarmLampOff();
+  }
 
 //___ Heating ___
 
@@ -310,5 +313,5 @@ if(rx_byte == '1'){
   if(rx_byte == 'x'){
   timerTwoOff();
   }  
- 
+  
 }
