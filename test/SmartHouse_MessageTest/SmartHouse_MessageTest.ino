@@ -104,10 +104,10 @@ void setup() {
 
 void loop() {  
 
-  if(Serial.available()){
-    rx_byte = Serial.read();
-    Serial.println(rx_byte);
-  } 
+//  if(Serial.available()){
+//    rx_byte = Serial.read();
+//    Serial.println(rx_byte);
+//  } 
 
 //___WiFi setup___
   if (wifiMessage.available()){
@@ -191,7 +191,7 @@ void loop() {
 
 if(isBurglarAlarmArmed){
   doorValue = digitalRead(burglarAlarmSensor);
-  Serial.println(burglarAlarmSensor);
+  Serial.println(doorValue);
           if(doorValue == 0){
           alarmOn();
           burglarAlarmLampOn();
