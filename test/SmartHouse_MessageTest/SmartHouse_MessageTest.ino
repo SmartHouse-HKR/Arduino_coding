@@ -9,14 +9,14 @@ const int tempSecondSens = A2;
 const int lightSensor = A3;
 
 // Digital pin setup
-const byte fireAlarmSwitch = 2;
-const byte burglarAlarmSensor = 3;
-const byte waterLeakSwitch = 4; 
-const byte ovenSwitch = 5;
-const byte windowOpenSwitch = 6;
-const byte powerCut = 7;
-const byte tempSensorOutside = 9;
-const byte fan = 10;
+const int fireAlarmSwitch = 2;
+const int burglarAlarmSensor = 3;
+const int waterLeakSwitch = 4; 
+const int ovenSwitch = 5;
+const int windowOpenSwitch = 6;
+const int powerCut = 7;
+const int tempSensorOutside = 9;
+const int fan = 10;
 
 // Variables setup
 int readingWindow;
@@ -314,5 +314,5 @@ if(rx_byte == '1'){
   if(rx_byte == 'x'){
   timerTwoOff();
   }  
-  
+ 
 }
