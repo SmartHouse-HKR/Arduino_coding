@@ -182,8 +182,6 @@ void loop() {
 
   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
-   Serial.println(lightSensor);
-        
       if(sensorValue < 17){
          outdoorLightState = true;
     }else {
@@ -243,9 +241,6 @@ if(doorValue == 0){
       heatingElementTwoOff();
       }
     }
-//    else {
-//      heatingElementTwoOff();
-//      }
 
 //digital temp sensor
   int temp = smt160.getTemp(tempSensorOutside);

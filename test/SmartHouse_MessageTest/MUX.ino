@@ -1,5 +1,4 @@
 void alarmOff(){
-  
     Serial.println("Lights off ");
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
@@ -46,7 +45,8 @@ void heatingElementOneOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
-   }
+}
+
  
 void heatingElementTwoOff(){
   Serial.println("heat el 2 off");
@@ -54,7 +54,7 @@ void heatingElementTwoOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
-   }
+}
     
 void heatingElementTwoOn(){
   Serial.print("heat el 2 on");
@@ -63,13 +63,14 @@ void heatingElementTwoOn(){
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
    }    
-
+   
 void indoorLightOff(){
   Serial.print("indoor lights off");
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
+
    }    
  
 void indoorLightOn(){
@@ -78,6 +79,7 @@ void indoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+
    }    
  
 void outdoorLightOff(){
@@ -86,6 +88,7 @@ void outdoorLightOff(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
+
    }    
  
 void outdoorLightOn(){
@@ -94,6 +97,7 @@ void outdoorLightOn(){
    digitalWrite(11, HIGH); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH); 
+
    }
     
 void timerOneOff(){
@@ -102,14 +106,16 @@ void timerOneOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, HIGH); 
+
    }
-    
+       
 void timerOneOn(){
   Serial.println("t1 on");
    digitalWrite(8, LOW); 
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, HIGH);
+
    }
     
 void timerTwoOff(){
@@ -118,6 +124,7 @@ void timerTwoOff(){
    digitalWrite(11, LOW); 
    digitalWrite(12, HIGH); 
    digitalWrite(13, LOW); 
+
    }    
 
 void timerTwoOn(){
@@ -126,4 +133,5 @@ void timerTwoOn(){
    digitalWrite(11, LOW); 
    digitalWrite(12, LOW); 
    digitalWrite(13, LOW); 
+
    }

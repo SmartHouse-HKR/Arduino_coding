@@ -45,24 +45,18 @@ void messageHandler(String topic, String message) {
     }
 
 //Fan
-  else if(topic == "smarthouse/fan/speed"){
+  else if(topic == "/smarthouse/fan/speed"){
     if(message == "0"){
       digitalWrite(fan, LOW);
       }
       else if(message == "50"){
-        digitalWrite(fan, HIGH);
-        delayMicroseconds(500); // Approximately 50% duty cycle @ 1KHz
-        digitalWrite(fan, LOW);
-        delayMicroseconds(1000 - 500);
+        analogWrite(fan, 127);
         }
         else if(message == "75"){
-        digitalWrite(fan, HIGH);
-        delayMicroseconds(750); // Approximately 75% duty cycle @ 1KHz
-        digitalWrite(fan, LOW);
-        delayMicroseconds(1000 - 750);
+        analogWrite(fan, 191);
         }
         else if(message == "100"){
-        digitalWrite(fan, HIGH);
+        analogWrite(fan, 255);
         }  
   } 
 }
