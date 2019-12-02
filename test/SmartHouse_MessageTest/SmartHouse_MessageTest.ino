@@ -1,4 +1,4 @@
- #include <SMT160.h>
+#include <SMT160.h>
 #include <SoftwareSerial.h>
 SoftwareSerial wifiMessage(0,1);
 
@@ -163,10 +163,10 @@ void loop() {
 
   if(readingWaterLast != readingWater){
     if(readingWater == 1){
-      sendToWifiModule("/smarthouse/oven/state", "true");
+      sendToWifiModule("/smarthouse/water_leak/trigger", "true");
       }
     if(readingWater == 0){
-      sendToWifiModule("/smarthouse/oven/state", "false");
+      sendToWifiModule("/smarthouse/water_leak/trigger", "false");
       }
     readingWaterLast=readingWater;
     }  
@@ -175,7 +175,7 @@ void loop() {
 
   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
-    Serial.println(lightSensor);
+//    Serial.println(lightSensor);
       if(sensorValue < 5){
       outdoorLightOn();
       }
@@ -183,14 +183,15 @@ void loop() {
       outdoorLightOff();
       }
     }
-  else{
-    outdoorLightOff();
-    }
+//  else{
+//    outdoorLightOff();
+//    }
 
  //___ Alarms ___
 
 if(isBurglarAlarmArmed){
-  doorValue=digitalRead(burglarAlarmSensor);
+  doorValue = digitalRead(burglarAlarmSensor);
+  Serial.println(burglarAlarmSensor);
           if(doorValue == 0){
           alarmOn();
           burglarAlarmLampOn();
@@ -198,9 +199,10 @@ if(isBurglarAlarmArmed){
           alarmOff();
           burglarAlarmLampOff();
         }
-}else {
-  burglarAlarmLampOff();
-  }
+}
+//else {
+//  burglarAlarmLampOff();
+//  }
 
 //___ Heating ___
 
@@ -216,9 +218,9 @@ if(isBurglarAlarmArmed){
       heatingElementOneOff();
       }
     }
-    else {
-      heatingElementOneOff();
-      }
+//    else {
+//      heatingElementOneOff();
+//      }
 
   tempAirSecond = analogRead(tempSecondSens);
   tempAirSecond = (tempAirSecond / 1024.0)*5000;
@@ -232,9 +234,9 @@ if(isBurglarAlarmArmed){
       heatingElementTwoOff();
       }
     }
-    else {
-      heatingElementTwoOff();
-      }
+//    else {
+//      heatingElementTwoOff();
+//      }
 
 //digital temp sensor
   int temp = smt160.getTemp(tempSensorOutside);

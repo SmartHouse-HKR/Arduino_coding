@@ -13,6 +13,6 @@ void sendToWifiModule(String topic, String message){
   Serial.println("sent to wifi module: " + ((String)topicArray) + " " + ((String)messageArray));
   free(topicArray);
   free(messageArray);
-  delay(5000);
+  delay(3000);
 
 }
