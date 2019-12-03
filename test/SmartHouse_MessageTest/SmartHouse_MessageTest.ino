@@ -1,6 +1,6 @@
 #include <SMT160.h>
 #include <SoftwareSerial.h>
-SoftwareSerial wifiMessage(0,1);
+SoftwareSerial wifiMessage(A4,A5);
 
 // Analog pin setup
 const int elecConsumption = A0;
