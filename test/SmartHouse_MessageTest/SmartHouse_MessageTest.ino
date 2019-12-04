@@ -105,9 +105,7 @@ void setup() {
   Serial.begin(9600);
 
   wifiMessage.begin(4800);
-  
-  Serial.println("Connection sucessful");
-
+ 
 }  
 
 void loop() {  
@@ -243,20 +241,19 @@ if(doorValue == 0){
     }
 
 //digital temp sensor
+  if (currentMillis - previousMillis >= intervalWifi){
   int temp = smt160.getTemp(tempSensorOutside);
 // if sensor failed getTemp return 0xffff
   if(temp != 0xffff){
     String extTemp =  String(temp/100);
-    if (currentMillis - previousMillis >= intervalWifi){
     sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp"); 
     }   
-    }
+}
 
 //___ Volatge ___
-
+ if (currentMillis - previousMillis >= intervalWifi){
   int sensorValue = analogRead(elecConsumption);
   String voltage =  String(sensorValue * (5.0 / 1023.0));
-  if (currentMillis - previousMillis >= intervalWifi){
   sendToWifiModule("/smarthouse/voltage/value", "voltage");
   }
 
