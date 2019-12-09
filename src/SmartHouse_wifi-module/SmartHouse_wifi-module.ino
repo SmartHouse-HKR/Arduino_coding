@@ -58,12 +58,13 @@ void reconnectMqttServer() {
 
 void subscribeToTopics(){
   
-//  client.subscribe("/smarthouse/temp/state");
-//  client.subscribe("/smarthouse/light/state");
-//  client.subscribe("/smarthouse/light2/state");
+//  client.subscribe("smarthouse/temp/state");
+//  client.subscribe("smarthouse/light/state");
+//  client.subscribe("smarthouse/light2/state");
 
-  client.subscribe("smarthouse/indoor_light/state"); //done
-  client.subscribe("smarthouse/outdoor_light/state"); //done
+  client.subscribe("smarthouse/indoor_light/state");
+  client.subscribe("smarthouse/outdoor_light/state");
+  client.subscribe("smarthouse/outdoor_light/trigger");
         
   client.subscribe("smarthouse/heater_1/state"); 
   client.subscribe("smarthouse/heater_2/state");

@@ -132,12 +132,12 @@ void loop() {
   
   if(readingWindowLast != readingWindow){
     if(readingWindow == 1){   
-      sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
+      sendToWifiModule("smarthouse/window_alarm/trigger", "true");
       burglarAlarmLampOn();
       alarmOn();
       }
     if(readingWindow == 0){
-      sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
+      sendToWifiModule("smarthouse/window_alarm/trigger", "false");
       burglarAlarmLampOff();
       alarmOff();    
       }
@@ -146,11 +146,11 @@ void loop() {
         
   if(readingFireLast != readingFire){
     if(readingFire == 1){
-      sendToWifiModule("/smarthouse/fire_alarm/trigger", "true");
+      sendToWifiModule("smarthouse/fire_alarm/trigger", "true");
       alarmOn();   
       }
     if(readingFire == 0){
-      sendToWifiModule("/smarthouse/fire_alarm/trigger", "false");
+      sendToWifiModule("smarthouse/fire_alarm/trigger", "false");
       alarmOff();     
       }
     readingFireLast=readingFire;
@@ -158,20 +158,20 @@ void loop() {
 
   if(readingStoveLast != readingStove){
     if(readingStove == 1){
-      sendToWifiModule("/smarthouse/oven/state", "true");
+      sendToWifiModule("smarthouse/oven/state", "true");
       }
     if(readingStove == 0){
-      sendToWifiModule("/smarthouse/oven/state", "false");    
+      sendToWifiModule("smarthouse/oven/state", "false");    
       }
     readingStoveLast=readingStove;
     }
 
   if(readingWaterLast != readingWater){
     if(readingWater == 1){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "true");
+      sendToWifiModule("smarthouse/water_leak/trigger", "true");
       }
     if(readingWater == 0){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "false");
+      sendToWifiModule("smarthouse/water_leak/trigger", "false");
       }
     readingWaterLast=readingWater;
     }  
@@ -180,7 +180,7 @@ void loop() {
 
   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
-      if(sensorValue < 17){
+      if(sensorValue < 100){
          outdoorLightState = true;
     }else {
        outdoorLightState = false;
@@ -246,7 +246,7 @@ if(doorValue == 0){
 // if sensor failed getTemp return 0xffff
   if(temp != 0xffff){
     String extTemp =  String(temp/100);
-    sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp"); 
+    sendToWifiModule("smarthouse/outdoor_temperature/value", "extTemp"); 
     }   
 }
 
@@ -254,10 +254,10 @@ if(doorValue == 0){
  if (currentMillis - previousMillis >= intervalWifi){
   int sensorValue = analogRead(elecConsumption);
   String voltage =  String(sensorValue * (5.0 / 1023.0));
-  sendToWifiModule("/smarthouse/voltage/value", "voltage");
+  sendToWifiModule("smarthouse/voltage/value", "voltage");
   }
 
-if(rx_byte == '1'){
+/*if(rx_byte == '1'){
     indoorLightOn();
   }
 
@@ -320,7 +320,7 @@ if(rx_byte == '1'){
   if(rx_byte == 'x'){
   timerTwoOff();
   }  
-
+*/
    if (currentMillis - previousMillis >= intervalWifi){
       previousMillis = currentMillis;
     }  
