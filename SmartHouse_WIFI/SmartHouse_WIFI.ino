@@ -176,6 +176,16 @@ void loop(){
                 String receivedData = receivedArduinoMessage();
                 String topic = getSubstring(receivedData, ' ', 0);
                 String message = getSubstring(receivedData, ' ', 1);
+                if(topic.equals("ip")){
+                  Serial.println("ip changed to: "+ message);
+                  message.toCharArray(ipAddress, 16);
+                }else if(topic.equals("wifi")){
+                  Serial.println("wifi changed to: "+ message);
+                  networkPassword = message;
+                }else if(topic.equals("wifi_pass")){
+                  Serial.println("wifi_pass changed to: "+ message);
+                  networkSSL = message;
+                }else{
                 Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
                 sendToMQTT(topic, message);
         }
