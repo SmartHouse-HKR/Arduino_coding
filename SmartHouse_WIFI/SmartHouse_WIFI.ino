@@ -26,14 +26,24 @@ void reconnectMqttServer() {
                         Serial.print("failed, rc=");
                         Serial.print(client.state());
                         Serial.println(" try again in 5 seconds");
-                        for(int i = 0; i < 500; i++){
-                          delay(10);
-                          
+                        for(int i = 0; i < 1000; i++){
+                              arduinoMessageCheck();
+                          delay(5);
                         }
                 }
         }
 }
 
+void arduinoMessageCheck(){
+                                  if(unoMessager.available()) {
+                                         
+                                         String receivedData = receivedArduinoData();
+                                         Serial.println("message from arduino: " + receivedData);
+                                         String topic = getSubstring(receivedData, ' ', 0);
+                                         String message = getSubstring(receivedData, ' ', 1);
+                                         handleReceivedData(topic, message);
+                              }
+}
 void subscribeToTopics(){
   
         //client.subscribe("/smarthouse/temp/state");
@@ -81,7 +91,10 @@ void wifiConnect(){
         Serial.println("START");
         WiFi.begin(networkSSL,networkPassword);
         while ((!(WiFi.status() == WL_CONNECTED))) {
-                delay(300);
+                for(int i = 0; i<60; i++){
+                  arduinoMessageCheck();
+                  delay(5);
+                }
                 Serial.print("..");
         }
 
@@ -129,7 +142,7 @@ String getSubstring(String data, char separator, int index){
         return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-String receivedArduinoMessage(){
+String receivedArduinoData(){
   
         String message = "";
         char part;
@@ -168,26 +181,26 @@ void loop(){
 
         client.loop();
 
-        if(unoMessager.available()) {
-                Serial.println("message from arduino available");
-                String receivedData = receivedArduinoMessage();
-                String topic = getSubstring(receivedData, ' ', 0);
-                String message = getSubstring(receivedData, ' ', 1);
-                handleReceivedData(topic, message);
-        }
+        arduinoMessageCheck();
 }
 
 void handleReceivedData(String topic, String message){
                 if(topic.equals("ip")){
                   Serial.println("ip changed to: "+ message);
                   message.toCharArray(ipAddress, 16);
+                  wifiConnect();
+                  client.setCallback(callback);
                 }else if(topic.equals("wifi")){
                   Serial.println("wifi changed to: "+ message);
-                  networkPassword = message;
-                }else if(topic.equals("wifi_pass")){
-                  Serial.println("wifi_pass changed to: "+ message);
                   networkSSL = message;
-                }else{
+                  wifiConnect();
+                  client.setCallback(callback);
+                }else if(topic.equals("wifiPass")){
+                  Serial.println("wifiPass changed to: "+ message);
+                  networkPassword = message;
+                  wifiConnect();
+                  client.setCallback(callback);
+                }else if(WiFi.status() == WL_CONNECTED && client.connected()){
                 Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
                 sendToMQTT(topic, message);
 }

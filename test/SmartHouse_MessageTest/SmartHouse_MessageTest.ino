@@ -261,65 +261,72 @@ if(rx_String == "1"){
     indoorLightOn();
   }
 
-  if(rx_String == "2"){
+  else if(rx_String == "2"){
     indoorLightOff();
   }
 
-  if(rx_String == "3"){
+  else if(rx_String == "3"){
     outdoorLightOn();
   }
 
-  if(rx_String == "4"){
+  else if(rx_String == "4"){
     outdoorLightOff();
   }
 
-    if(rx_String == "5"){
+    else if(rx_String == "5"){
     alarmOn();
   }
 
-  if(rx_String == "6"){
+  else if(rx_String == "6"){
     alarmOff();
   }
 
-  if(rx_String == "7"){
+  else if(rx_String == "7"){
     burglarAlarmLampOn();
   }
 
-  if(rx_String == "8"){
+  else if(rx_String == "8"){
     burglarAlarmLampOff();
   }
 
-    if(rx_String == "9"){
+    else if(rx_String == "9"){
     heatingElementOneOn();
   }
 
-  if(rx_String == "0"){
+  else if(rx_String == "0"){
     heatingElementOneOff();
   }
   
-  if(rx_String == "q"){
+  else if(rx_String == "q"){
     heatingElementTwoOn();
   }
   
-  if(rx_String == "w"){
+  else if(rx_String == "w"){
     heatingElementTwoOff();
   }
 
-  if(rx_String == "a"){
+  else if(rx_String == "a"){
     timerOneOn();
   }
   
-  if(rx_String == "s"){
+  else if(rx_String == "s"){
   timerOneOff();
   }
 
-  if(rx_String == "z"){
+  else if(rx_String == "z"){
   timerTwoOn();
-  }
-  
-  if(rx_String == "x"){
+  }else if(rx_String == "x"){
   timerTwoOff();
-  }
+       }else if(rx_String.substring(0,2) == "ip") {
+                Serial.println("setting ip to: "+ rx_String.substring(3));
+                sendToWifiModule("ip", rx_String.substring(3));
+        }else if(rx_String.substring(0,5) == "wifi ") {
+                Serial.println("setting wifi to: "+ rx_String.substring(5));
+                sendToWifiModule("wifi", rx_String.substring(5));
+        } else if(rx_String.substring(0,9) == "wifi_pass") {
+                Serial.println("setting wifi_pass to: "+ rx_String.substring(10));
+                sendToWifiModule("wifiPass", rx_String.substring(10));
+        }
 
  rx_String = " ";
 
