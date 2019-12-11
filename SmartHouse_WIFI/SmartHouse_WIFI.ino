@@ -7,17 +7,11 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 /*  Connection variables  */
-String networkSSL = "dellema";
-String networkPassword = "aaaabbbb";
-char* ipAddress = "194.47.41.50";
+String networkSSL = "Ras_the_Moose";
+String networkPassword = "12345678";
+char* ipAddress = "192.168.43.99";
 uint16_t port = 1883;
 
-char* toCharArr(String string){
-  
-        char charArr[50];
-        string.toCharArray(charArr, 50);
-        return charArr;
-}
 
 void reconnectMqttServer() {
   
@@ -32,7 +26,10 @@ void reconnectMqttServer() {
                         Serial.print("failed, rc=");
                         Serial.print(client.state());
                         Serial.println(" try again in 5 seconds");
-                        delay(5000);
+                        for(int i = 0; i < 500; i++){
+                          delay(10);
+                          
+                        }
                 }
         }
 }
@@ -176,6 +173,11 @@ void loop(){
                 String receivedData = receivedArduinoMessage();
                 String topic = getSubstring(receivedData, ' ', 0);
                 String message = getSubstring(receivedData, ' ', 1);
+                handleReceivedData(topic, message);
+        }
+}
+
+void handleReceivedData(String topic, String message){
                 if(topic.equals("ip")){
                   Serial.println("ip changed to: "+ message);
                   message.toCharArray(ipAddress, 16);
@@ -188,5 +190,5 @@ void loop(){
                 }else{
                 Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
                 sendToMQTT(topic, message);
-        }
+}
 }

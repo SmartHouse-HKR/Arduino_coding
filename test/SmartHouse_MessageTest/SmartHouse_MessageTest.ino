@@ -34,7 +34,7 @@ int doorValueLast;
 int outdoorLightValue;
 int outdoorLightLast;
 
-char rx_byte = 0;
+String rx_String = " ";
 int sensorValue = 0;
 
 float tempAirFirst;
@@ -111,9 +111,9 @@ void setup() {
 void loop() {  
   unsigned long currentMillis = millis();
 
-  if(Serial.available()){
-  rx_byte = Serial.read();
-    } 
+  if(Serial.available())
+  rx_String = Serial.readString();
+    
 
 //___WiFi setup___
   if (wifiMessage.available()){
@@ -177,7 +177,7 @@ void loop() {
     }  
   
 //___ Lights ___
-
+/*
   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
       if(sensorValue < 17){
@@ -249,7 +249,7 @@ if(doorValue == 0){
     sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp"); 
     }   
 }
-
+*/
 //___ Volatge ___
  if (currentMillis - previousMillis >= intervalWifi){
   int sensorValue = analogRead(elecConsumption);
@@ -257,69 +257,71 @@ if(doorValue == 0){
   sendToWifiModule("/smarthouse/voltage/value", "voltage");
   }
 
-if(rx_byte == '1'){
+if(rx_String == "1"){
     indoorLightOn();
   }
 
-  if(rx_byte == '2'){
+  if(rx_String == "2"){
     indoorLightOff();
   }
 
-  if(rx_byte == '3'){
+  if(rx_String == "3"){
     outdoorLightOn();
   }
 
-  if(rx_byte == '4'){
+  if(rx_String == "4"){
     outdoorLightOff();
   }
 
-    if(rx_byte == '5'){
+    if(rx_String == "5"){
     alarmOn();
   }
 
-  if(rx_byte == '6'){
+  if(rx_String == "6"){
     alarmOff();
   }
 
-  if(rx_byte == '7'){
+  if(rx_String == "7"){
     burglarAlarmLampOn();
   }
 
-  if(rx_byte == '8'){
+  if(rx_String == "8"){
     burglarAlarmLampOff();
   }
 
-    if(rx_byte == '9'){
+    if(rx_String == "9"){
     heatingElementOneOn();
   }
 
-  if(rx_byte == '0'){
+  if(rx_String == "0"){
     heatingElementOneOff();
   }
   
-  if(rx_byte == 'q'){
+  if(rx_String == "q"){
     heatingElementTwoOn();
   }
   
-  if(rx_byte == 'w'){
+  if(rx_String == "w"){
     heatingElementTwoOff();
   }
 
-  if(rx_byte == 'a'){
+  if(rx_String == "a"){
     timerOneOn();
   }
   
-  if(rx_byte == 's'){
+  if(rx_String == "s"){
   timerOneOff();
   }
 
-  if(rx_byte == 'z'){
+  if(rx_String == "z"){
   timerTwoOn();
   }
   
-  if(rx_byte == 'x'){
+  if(rx_String == "x"){
   timerTwoOff();
-  }  
+  }
+
+ rx_String = " ";
 
    if (currentMillis - previousMillis >= intervalWifi){
       previousMillis = currentMillis;
