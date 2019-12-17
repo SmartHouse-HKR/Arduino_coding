@@ -21,6 +21,7 @@ void reconnectMqttServer() {
                 clientId += String(random(0xffff), HEX);
                 if (client.connect(clientId.c_str())) {
                         Serial.println("connected");
+                        sendToArduino("MQTT_server","connected");
                         subscribeToTopics();
                 } else {
                         Serial.print("failed, rc=");
@@ -97,7 +98,8 @@ void wifiConnect(){
                 Serial.print("..");
         }
 
-        Serial.println("wifiConnected");
+        Serial.println("wifi connected");
+        sendToArduino("WIFI","connected");
         Serial.println("Your IP is");
         Serial.println((WiFi.localIP().toString()));
         client.setServer( ipAddress, port);
