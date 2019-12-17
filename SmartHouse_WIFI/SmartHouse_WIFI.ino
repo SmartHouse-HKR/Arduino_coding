@@ -35,6 +35,7 @@ void reconnectMqttServer() {
 }
 
 void arduinoMessageCheck(){
+
                                   if(unoMessager.available()) {
                                          
                                          String receivedData = receivedArduinoData();
@@ -46,10 +47,8 @@ void arduinoMessageCheck(){
 }
 void subscribeToTopics(){
   
-        //client.subscribe("/smarthouse/temp/state");
-        //client.subscribe("/smarthouse/light/state");
-        //client.subscribe("/smarthouse/light2/state");
-
+        client.subscribe("echo");
+        
         client.subscribe("smarthouse/indoor_light/state"); //done
         client.subscribe("smarthouse/outdoor_light/state"); //done
         
@@ -126,6 +125,20 @@ void sendToArduino(char* topicArray, String message){
         delay(5);
 }
 
+void sendToArduino(String topic, String message){
+
+        char* messageArray = (char*) malloc(sizeof(char)*message.length()+1);
+        char* topicArray = (char*) malloc(sizeof(char)*topic.length()+1);
+        message.toCharArray(messageArray, message.length()+1);
+        topic.toCharArray(topicArray, topic.length()+1);
+        unoMessager.write(topicArray);
+        unoMessager.write(' ');
+        unoMessager.write(messageArray);
+        unoMessager.write('\n');
+        free(messageArray);
+        free(topicArray);
+        delay(5);
+}
 String getSubstring(String data, char separator, int index){
   
         int found = 0;
@@ -169,7 +182,6 @@ void setup(){
 
         Serial.begin(9600);
         unoMessager.begin(4800);
-        //pinSetup();
         wifiConnect();
         client.setCallback(callback);
 }
@@ -195,13 +207,28 @@ void handleReceivedData(String topic, String message){
                   networkSSL = message;
                   wifiConnect();
                   client.setCallback(callback);
-                }else if(topic.equals("wifiPass")){
-                  Serial.println("wifiPass changed to: "+ message);
+                }else if(topic.equals("wifi_pass")){
+                  Serial.println("wifi_pass changed to: "+ message);
                   networkPassword = message;
                   wifiConnect();
                   client.setCallback(callback);
+                }else if(topic.equals("status")){
+                  Serial.println("sending status to arduino");
+                  sendToArduino("reply",((String)("wifi: "+getWifiStatus()+", MQTT-client: "+getMQTTClientStatus())));
                 }else if(WiFi.status() == WL_CONNECTED && client.connected()){
                 Serial.println("sending to MQTT, topic: " + topic + ", message: " + message);
                 sendToMQTT(topic, message);
 }
+}
+
+String getWifiStatus(){
+  if(WiFi.status() == WL_CONNECTED)
+  return "connected";
+  else return "not connected";
+}
+
+String getMQTTClientStatus(){
+  if(client.connected())
+  return "connected";
+  else return "not connected";
 }

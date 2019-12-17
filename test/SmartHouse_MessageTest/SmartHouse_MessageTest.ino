@@ -11,7 +11,7 @@ const int lightSensor = A3;
 // Digital pin setup
 const byte fireAlarmSwitch = 2;
 const byte burglarAlarmSensor = 3;
-const byte waterLeakSwitch = 4; 
+const byte waterLeakSwitch = 4;
 const byte ovenSwitch = 5;
 const byte windowOpenSwitch = 6;
 const byte powerCut = 7;
@@ -38,14 +38,14 @@ String rx_String = " ";
 int sensorValue = 0;
 
 float tempAirFirst;
-float tempAirSecond; 
+float tempAirSecond;
 
 bool waitingMsg = false;
 int messageSent = 0;
 
 // timer delay
 unsigned long previousMillis = 0;
-const long intervalWifi = 3000;  
+const long intervalWifi = 3000;
 
 // digital sensor
 SMT160 smt160;
@@ -69,16 +69,16 @@ void messageHandler(String, String);
 String getWifiMessage(void);
 String getSubstring(String,char,int);
 void sendToWifiModule(String, String);
-void alarmOff(long, long, long);
-void alarmOn(long, long, long);
-void burglarAlarmLampOff(void); 
+void alarmOff();
+void alarmOn();
+void burglarAlarmLampOff(void);
 void burglarAlarmLampOn(void);
 void heatingElementOneOn(void);
 void heatingElementOneOff(void);
 void heatingElementTwoOn(void);
 void heatingElementTwoOff(void);
-void indroorLightOn(void);
-void indroorLightOff(void);
+void indoorLightOn(void);
+void indoorLightOff(void);
 void outdoorLightOn(void);
 void outdoorLightOff(void);
 void timerOneOn(void);
@@ -87,98 +87,98 @@ void timerTwoOn(void);
 void timerTwoOff(void);
 
 void setup() {
- 
-  pinMode(fireAlarmSwitch, INPUT);
-  pinMode(burglarAlarmSensor, INPUT);
-  pinMode(waterLeakSwitch, INPUT);
-  pinMode(ovenSwitch, INPUT);
-  pinMode(windowOpenSwitch, INPUT); 
-  pinMode(powerCut, INPUT);
-  pinMode(tempSensorOutside, INPUT);
-  pinMode(fan, OUTPUT); 
 
-  pinMode(8, OUTPUT); //MUX1
-  pinMode(11, OUTPUT); //MUX2
-  pinMode(12, OUTPUT); //MUX3
-  pinMode(13, OUTPUT); //MUX4
+        pinMode(fireAlarmSwitch, INPUT);
+        pinMode(burglarAlarmSensor, INPUT);
+        pinMode(waterLeakSwitch, INPUT);
+        pinMode(ovenSwitch, INPUT);
+        pinMode(windowOpenSwitch, INPUT);
+        pinMode(powerCut, INPUT);
+        pinMode(tempSensorOutside, INPUT);
+        pinMode(fan, OUTPUT);
 
-  Serial.begin(9600);
+        pinMode(8, OUTPUT); //MUX1
+        pinMode(11, OUTPUT); //MUX2
+        pinMode(12, OUTPUT); //MUX3
+        pinMode(13, OUTPUT); //MUX4
 
-  wifiMessage.begin(4800);
- 
-}  
+        Serial.begin(9600);
 
-void loop() {  
-  unsigned long currentMillis = millis();
+        wifiMessage.begin(4800);
 
-  if(Serial.available())
-  rx_String = Serial.readString();
-    
+}
+
+void loop() {
+        unsigned long currentMillis = millis();
+
+        if(Serial.available())
+                rx_String = Serial.readString();
+
 
 //___WiFi setup___
-  if (wifiMessage.available()){
-    String receivedData = getWifiMessage();
-    String topic = getSubstring(receivedData, ' ', 0);
-    String message = getSubstring(receivedData, ' ', 1);
-    messageHandler(topic, message);
-    }     
+        if (wifiMessage.available()) {
+                String receivedData = getWifiMessage();
+                String topic = getSubstring(receivedData, ' ', 0);
+                String message = getSubstring(receivedData, ' ', 1);
+                messageHandler(topic, message);
+        }
 
-//___Switches___  
+//___Switches___
 
-  readingWindow=digitalRead(windowOpenSwitch);
-  readingFire=digitalRead(fireAlarmSwitch);
-  readingStove=digitalRead(ovenSwitch);
-  readingWater=digitalRead(waterLeakSwitch);
-  
-  if(readingWindowLast != readingWindow){
-    if(readingWindow == 1){   
-      sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
-      burglarAlarmLampOn();
-      alarmOn();
-      }
-    if(readingWindow == 0){
-      sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
-      burglarAlarmLampOff();
-      alarmOff();    
-      }
-    readingWindowLast=readingWindow;
-    }
-        
-  if(readingFireLast != readingFire){
-    if(readingFire == 1){
-      sendToWifiModule("/smarthouse/fire_alarm/trigger", "true");
-      alarmOn();   
-      }
-    if(readingFire == 0){
-      sendToWifiModule("/smarthouse/fire_alarm/trigger", "false");
-      alarmOff();     
-      }
-    readingFireLast=readingFire;
-    }
+        readingWindow=digitalRead(windowOpenSwitch);
+        readingFire=digitalRead(fireAlarmSwitch);
+        readingStove=digitalRead(ovenSwitch);
+        readingWater=digitalRead(waterLeakSwitch);
 
-  if(readingStoveLast != readingStove){
-    if(readingStove == 1){
-      sendToWifiModule("/smarthouse/oven/state", "true");
-      }
-    if(readingStove == 0){
-      sendToWifiModule("/smarthouse/oven/state", "false");    
-      }
-    readingStoveLast=readingStove;
-    }
+        if(readingWindowLast != readingWindow) {
+                if(readingWindow == 1) {
+                        sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
+                        burglarAlarmLampOn();
+                        alarmOn();
+                }
+                if(readingWindow == 0) {
+                        sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
+                        burglarAlarmLampOff();
+                        alarmOff();
+                }
+                readingWindowLast=readingWindow;
+        }
 
-  if(readingWaterLast != readingWater){
-    if(readingWater == 1){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "true");
-      }
-    if(readingWater == 0){
-      sendToWifiModule("/smarthouse/water_leak/trigger", "false");
-      }
-    readingWaterLast=readingWater;
-    }  
-  
+        if(readingFireLast != readingFire) {
+                if(readingFire == 1) {
+                        sendToWifiModule("/smarthouse/fire_alarm/trigger", "true");
+                        alarmOn();
+                }
+                if(readingFire == 0) {
+                        sendToWifiModule("/smarthouse/fire_alarm/trigger", "false");
+                        alarmOff();
+                }
+                readingFireLast=readingFire;
+        }
+
+        if(readingStoveLast != readingStove) {
+                if(readingStove == 1) {
+                        sendToWifiModule("/smarthouse/oven/state", "true");
+                }
+                if(readingStove == 0) {
+                        sendToWifiModule("/smarthouse/oven/state", "false");
+                }
+                readingStoveLast=readingStove;
+        }
+
+        if(readingWaterLast != readingWater) {
+                if(readingWater == 1) {
+                        sendToWifiModule("/smarthouse/water_leak/trigger", "true");
+                }
+                if(readingWater == 0) {
+                        sendToWifiModule("/smarthouse/water_leak/trigger", "false");
+                }
+                readingWaterLast=readingWater;
+        }
+
 //___ Lights ___
 /*
-  if(isOutdoorLightArmed){
+   if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
       if(sensorValue < 17){
          outdoorLightState = true;
@@ -193,32 +193,32 @@ void loop() {
           outdoorLightOff();
             }
          }
-      outdoorLightLastState = outdoorLightState;   
+      outdoorLightLastState = outdoorLightState;
     }
- //___ Alarms ___
+   //___ Alarms ___
 
-if(isBurglarAlarmArmed){
-  doorValue = digitalRead(burglarAlarmSensor);
+   if(isBurglarAlarmArmed){
+   doorValue = digitalRead(burglarAlarmSensor);
 
-if(doorValueLast != doorValue){
-if(doorValue == 0){
+   if(doorValueLast != doorValue){
+   if(doorValue == 0){
    burglarAlarmLampOn();
           alarmOn();
         }if(doorValue == 1){
            burglarAlarmLampOff();
-    alarmOff();   
-    }  
+    alarmOff();
+    }
     doorValueLast = doorValue;
         }
-}
+   }
 
-//___ Heating ___
+   //___ Heating ___
 
-  tempAirFirst = analogRead(tempFirstSens);
-  tempAirFirst = (tempAirFirst / 1024.0)*5000;
-  tempAirFirst =  tempAirFirst / 10;
+   tempAirFirst = analogRead(tempFirstSens);
+   tempAirFirst = (tempAirFirst / 1024.0)*5000;
+   tempAirFirst =  tempAirFirst / 10;
 
-  if(isHeaterOneArmed){
+   if(isHeaterOneArmed){
     if (tempAirFirst <= (heaterOneTemp - 3)){
       heatingElementOneOn();
       }
@@ -227,11 +227,11 @@ if(doorValue == 0){
       }
     }
 
-  tempAirSecond = analogRead(tempSecondSens);
-  tempAirSecond = (tempAirSecond / 1024.0)*5000;
-  tempAirSecond =  tempAirSecond / 10;
+   tempAirSecond = analogRead(tempSecondSens);
+   tempAirSecond = (tempAirSecond / 1024.0)*5000;
+   tempAirSecond =  tempAirSecond / 10;
 
-  if(isHeaterTwoArmed){
+   if(isHeaterTwoArmed){
     if (tempAirSecond <= (heaterTwoTemp - 3)){
       heatingElementTwoOn();
       }
@@ -240,97 +240,100 @@ if(doorValue == 0){
       }
     }
 
-//digital temp sensor
-  if (currentMillis - previousMillis >= intervalWifi){
-  int temp = smt160.getTemp(tempSensorOutside);
-// if sensor failed getTemp return 0xffff
-  if(temp != 0xffff){
+   //digital temp sensor
+   if (currentMillis - previousMillis >= intervalWifi){
+   int temp = smt160.getTemp(tempSensorOutside);
+   // if sensor failed getTemp return 0xffff
+   if(temp != 0xffff){
     String extTemp =  String(temp/100);
-    sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp"); 
-    }   
-}
-*/
+    sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp");
+    }
+   }
+
 //___ Volatge ___
- if (currentMillis - previousMillis >= intervalWifi){
-  int sensorValue = analogRead(elecConsumption);
-  String voltage =  String(sensorValue * (5.0 / 1023.0));
-  sendToWifiModule("/smarthouse/voltage/value", "voltage");
-  }
+        if (currentMillis - previousMillis >= intervalWifi) {
+                int sensorValue = analogRead(elecConsumption);
+                String voltage =  String(sensorValue * (5.0 / 1023.0));
+                sendToWifiModule("/smarthouse/voltage/value", "voltage");
+        }
+ */
+        if(rx_String == "1") {
+                indoorLightOn();
+        }
 
-if(rx_String == "1"){
-    indoorLightOn();
-  }
+        else if(rx_String == "2") {
+                indoorLightOff();
+        }
 
-  else if(rx_String == "2"){
-    indoorLightOff();
-  }
+        else if(rx_String == "3") {
+                outdoorLightOn();
+        }
 
-  else if(rx_String == "3"){
-    outdoorLightOn();
-  }
+        else if(rx_String == "4") {
+                outdoorLightOff();
+        }
 
-  else if(rx_String == "4"){
-    outdoorLightOff();
-  }
+        else if(rx_String == "5") {
+                alarmOn();
+        }
 
-    else if(rx_String == "5"){
-    alarmOn();
-  }
+        else if(rx_String == "6") {
+                alarmOff();
+        }
 
-  else if(rx_String == "6"){
-    alarmOff();
-  }
+        else if(rx_String == "7") {
+                burglarAlarmLampOn();
+        }
 
-  else if(rx_String == "7"){
-    burglarAlarmLampOn();
-  }
+        else if(rx_String == "8") {
+                burglarAlarmLampOff();
+        }
 
-  else if(rx_String == "8"){
-    burglarAlarmLampOff();
-  }
+        else if(rx_String == "9") {
+                heatingElementOneOn();
+        }
 
-    else if(rx_String == "9"){
-    heatingElementOneOn();
-  }
+        else if(rx_String == "0") {
+                heatingElementOneOff();
+        }
 
-  else if(rx_String == "0"){
-    heatingElementOneOff();
-  }
-  
-  else if(rx_String == "q"){
-    heatingElementTwoOn();
-  }
-  
-  else if(rx_String == "w"){
-    heatingElementTwoOff();
-  }
+        else if(rx_String == "q") {
+                heatingElementTwoOn();
+        }
 
-  else if(rx_String == "a"){
-    timerOneOn();
-  }
-  
-  else if(rx_String == "s"){
-  timerOneOff();
-  }
+        else if(rx_String == "w") {
+                heatingElementTwoOff();
+        }
 
-  else if(rx_String == "z"){
-  timerTwoOn();
-  }else if(rx_String == "x"){
-  timerTwoOff();
-       }else if(rx_String.substring(0,2) == "ip") {
+        else if(rx_String == "a") {
+                timerOneOn();
+        }
+
+        else if(rx_String == "s") {
+                timerOneOff();
+        }
+
+        else if(rx_String == "z") {
+                timerTwoOn();
+        }else if(rx_String == "x") {
+                timerTwoOff();
+        }else if(rx_String.substring(0,3) == "ip ") {
                 Serial.println("setting ip to: "+ rx_String.substring(3));
                 sendToWifiModule("ip", rx_String.substring(3));
         }else if(rx_String.substring(0,5) == "wifi ") {
                 Serial.println("setting wifi to: "+ rx_String.substring(5));
                 sendToWifiModule("wifi", rx_String.substring(5));
-        } else if(rx_String.substring(0,9) == "wifi_pass") {
+        } else if(rx_String.substring(0,10) == "wifi_pass ") {
                 Serial.println("setting wifi_pass to: "+ rx_String.substring(10));
-                sendToWifiModule("wifiPass", rx_String.substring(10));
+                sendToWifiModule("wifi_pass", rx_String.substring(10));
+        } else if(rx_String.substring(0,6) == "status") {
+                Serial.println("getting connectivity status");
+                sendToWifiModule("status", "get");
         }
+                rx_String = " ";
 
- rx_String = " ";
-
-   if (currentMillis - previousMillis >= intervalWifi){
-      previousMillis = currentMillis;
-    }  
+                if (currentMillis - previousMillis >= intervalWifi) {
+                        previousMillis = currentMillis;
+                }
+        
 }
