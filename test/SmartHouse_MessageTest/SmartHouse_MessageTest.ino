@@ -34,7 +34,7 @@ int doorValueLast;
 int outdoorLightValue;
 int outdoorLightLast;
 
-String rx_String = " ";
+String serial_String = " ";
 int sensorValue = 0;
 
 float tempAirFirst;
@@ -112,7 +112,7 @@ void loop() {
         unsigned long currentMillis = millis();
 
         if(Serial.available())
-                rx_String = Serial.readString();
+                serial_String = Serial.readString();
 
 
 //___WiFi setup___
@@ -177,7 +177,7 @@ void loop() {
         }
 
 //___ Lights ___
-/*
+
    if(isOutdoorLightArmed){
     sensorValue = analogRead(lightSensor);
       if(sensorValue < 17){
@@ -246,7 +246,7 @@ void loop() {
    // if sensor failed getTemp return 0xffff
    if(temp != 0xffff){
     String extTemp =  String(temp/100);
-    sendToWifiModule("/smarthouse/outdoor_temperature/value", "extTemp");
+    sendToWifiModule("smarthouse/outdoor_temperature/value", "extTemp");
     }
    }
 
@@ -254,83 +254,89 @@ void loop() {
         if (currentMillis - previousMillis >= intervalWifi) {
                 int sensorValue = analogRead(elecConsumption);
                 String voltage =  String(sensorValue * (5.0 / 1023.0));
-                sendToWifiModule("/smarthouse/voltage/value", "voltage");
+                sendToWifiModule("smarthouse/voltage/value/reply",voltage);
         }
- */
-        if(rx_String == "1") {
+        if(serial_String != " ")
+        Serial.print(serial_String);
+        if(serial_String == "1\n") {
                 indoorLightOn();
         }
 
-        else if(rx_String == "2") {
+        else if(serial_String == "2\n") {
                 indoorLightOff();
         }
 
-        else if(rx_String == "3") {
+        else if(serial_String == "3\n") {
                 outdoorLightOn();
         }
 
-        else if(rx_String == "4") {
+        else if(serial_String == "4\n") {
                 outdoorLightOff();
         }
 
-        else if(rx_String == "5") {
+        else if(serial_String == "5\n") {
                 alarmOn();
         }
 
-        else if(rx_String == "6") {
+        else if(serial_String == "6\n") {
                 alarmOff();
         }
 
-        else if(rx_String == "7") {
+        else if(serial_String == "7\n") {
                 burglarAlarmLampOn();
         }
 
-        else if(rx_String == "8") {
+        else if(serial_String == "8\n") {
                 burglarAlarmLampOff();
         }
 
-        else if(rx_String == "9") {
+        else if(serial_String == "9\n") {
                 heatingElementOneOn();
         }
 
-        else if(rx_String == "0") {
+        else if(serial_String == "0\n") {
                 heatingElementOneOff();
         }
 
-        else if(rx_String == "q") {
+        else if(serial_String == "q\n") {
                 heatingElementTwoOn();
         }
 
-        else if(rx_String == "w") {
+        else if(serial_String == "w\n") {
                 heatingElementTwoOff();
         }
 
-        else if(rx_String == "a") {
+        else if(serial_String == "a\n") {
                 timerOneOn();
         }
 
-        else if(rx_String == "s") {
+        else if(serial_String == "s\n") {
                 timerOneOff();
         }
+        else if(serial_String == "light\n") {
+                isOutdoorLightArmed = !isOutdoorLightArmed;
+                if(isOutdoorLightArmed) Serial.println("OutdoorLight Armed");
+                else Serial.println("OutdoorLight Disarmed");
+        }
 
-        else if(rx_String == "z") {
+        else if(serial_String == "z\n") {
                 timerTwoOn();
-        }else if(rx_String == "x") {
+        }else if(serial_String == "x\n") {
                 timerTwoOff();
-        }else if(rx_String.substring(0,3) == "ip ") {
-                Serial.println("setting ip to: "+ rx_String.substring(3));
-                sendToWifiModule("ip", rx_String.substring(3));
-        }else if(rx_String.substring(0,5) == "wifi ") {
-                Serial.println("setting wifi to: "+ rx_String.substring(5));
-                sendToWifiModule("wifi", rx_String.substring(5));
-        } else if(rx_String.substring(0,10) == "wifi_pass ") {
-                Serial.println("setting wifi_pass to: "+ rx_String.substring(10));
-                sendToWifiModule("wifi_pass", rx_String.substring(10));
-        } else if(rx_String.substring(0,6) == "status") {
+        }else if(serial_String.substring(0,3) == "ip ") {
+                Serial.println("setting ip to: "+ serial_String.substring(3));
+                sendToWifiModule("ip", serial_String.substring(3));
+        }else if(serial_String.substring(0,5) == "wifi ") {
+                Serial.println("setting wifi to: "+ serial_String.substring(5));
+                sendToWifiModule("wifi", serial_String.substring(5));
+        } else if(serial_String.substring(0,10) == "wifi_pass ") {
+                Serial.println("setting wifi_pass to: "+ serial_String.substring(10));
+                sendToWifiModule("wifi_pass", serial_String.substring(10));
+        } else if(serial_String.substring(0,6) == "status") {
                 Serial.println("getting connectivity status");
                 sendToWifiModule("status", "get");
         }
-                rx_String = " ";
+                serial_String = " ";
 
                 if (currentMillis - previousMillis >= intervalWifi) {
                         previousMillis = currentMillis;
