@@ -112,7 +112,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         }
         Serial.println("message received from MQTT, topic: " + MQTT_DATA + ", Topic:  " + topic);
         delay(5);
-        sendToArduino(topic, MQTT_DATA);
+        sendToArduino(topic, MQTT_DATA.toLowerCase());
 }
 
 void sendToArduino(char* topicArray, String message){
