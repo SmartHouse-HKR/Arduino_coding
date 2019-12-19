@@ -213,42 +213,13 @@ void loop() {
         }
    }
 
-   //___ Heating ___
 
-   tempAirFirst = analogRead(tempFirstSens);
-   tempAirFirst = (tempAirFirst / 1024.0)*5000;
-   tempAirFirst =  tempAirFirst / 10;
-
-   if(isHeaterOneArmed){
-    if (tempAirFirst <= (heaterOneTemp - 3)){
-      heatingElementOneOn();
-      }
-    else if(tempAirFirst >= (heaterOneTemp + 3)){
-      heatingElementOneOff();
-      }
-    }
-
-   tempAirSecond = analogRead(tempSecondSens);
-   tempAirSecond = (tempAirSecond / 1024.0)*5000;
-   tempAirSecond =  tempAirSecond / 10;
-
-   if(isHeaterTwoArmed){
-    if (tempAirSecond <= (heaterTwoTemp - 3)){
-      heatingElementTwoOn();
-      }
-    else if(tempAirSecond >= (heaterTwoTemp + 3)){
-      heatingElementTwoOff();
-      }
-    }
-    /*
 //Heating refactored but untested
    if(isHeaterOneArmed)
       indoorTemperatureControll(heaterOneTemp, getIndoorTemperature(tempFirstSens), 1);
     
    if(isHeaterTwoArmed)
       indoorTemperatureControll(heaterTwoTemp, getIndoorTemperature(tempSecondSens), 2);
-    
-*/
 
 if (currentMillis - previousMillis >= intervalWifi) {
 
@@ -279,7 +250,7 @@ void indoorTemperatureControll(int presetTemp, float currentTemp, int element){
       if(element = 1) heatingElementOneOn();
       else heatingElementTwoOn();
       }
-    else if(tempAirFirst >= (heaterOneTemp + 3)){
+    else if(currentTemp >= (presetTemp + 3)){
       if(element = 1) heatingElementOneOff();
       else heatingElementTwoOff();
       }
