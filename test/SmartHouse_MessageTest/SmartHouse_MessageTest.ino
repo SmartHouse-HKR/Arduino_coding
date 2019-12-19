@@ -250,12 +250,21 @@ void loop() {
     }
    }
 
-//___ Volatge ___
+  voltage();
+  serialStringHandler(serial_String);
+}
+
+void voltage(){
+  //___ Volatge ___
         if (currentMillis - previousMillis >= intervalWifi) {
                 int sensorValue = analogRead(elecConsumption);
                 String voltage =  String(sensorValue * (5.0 / 1023.0));
                 sendToWifiModule("smarthouse/voltage/value/reply",voltage);
         }
+}
+
+void serialStringHandler(String serial_String){
+  
         if(serial_String != " ")
         Serial.print(serial_String);
         if(serial_String == "1\n") {
@@ -341,5 +350,4 @@ void loop() {
                 if (currentMillis - previousMillis >= intervalWifi) {
                         previousMillis = currentMillis;
                 }
-        
 }
