@@ -112,7 +112,8 @@ void loop() {
         unsigned long currentMillis = millis();
 
         if(Serial.available())
-                serial_String = Serial.readString();
+          serialStringHandler(Serial.readString());
+                
 
 
 //___WiFi setup___
@@ -239,29 +240,55 @@ void loop() {
       heatingElementTwoOff();
       }
     }
+    /*
+//Heating refactored but untested
+   if(isHeaterOneArmed)
+      indoorTemperatureControll(heaterOneTemp, getIndoorTemperature(tempFirstSens), 1);
+    
+   if(isHeaterTwoArmed)
+      indoorTemperatureControll(heaterTwoTemp, getIndoorTemperature(tempSecondSens), 2);
+    
+*/
 
-   //digital temp sensor
-   if (currentMillis - previousMillis >= intervalWifi){
-   int temp = smt160.getTemp(tempSensorOutside);
+if (currentMillis - previousMillis >= intervalWifi) {
+
+       //digital temp sensor
+  sendToWifiModule("smarthouse/outdoor_temperature/value", getOutsideTemperature());
+       //___ Volatge ___
+  sendToWifiModule("smarthouse/voltage/value/reply",getVoltage());
+}
+
+}
+
+String getOutsideTemperature(){
+     int temp = smt160.getTemp(tempSensorOutside);
    // if sensor failed getTemp return 0xffff
-   if(temp != 0xffff){
-    String extTemp =  String(temp/100);
-    sendToWifiModule("smarthouse/outdoor_temperature/value", "extTemp");
+     if(temp == 0xffff)
+      return "null";
+   
+    return  String(temp/100);
     }
-   }
-
-  voltage();
-  serialStringHandler(serial_String);
+    
+float getIndoorTemperature(const int pin){
+     float temp = analogRead(pin);
+     return ((temp / 1024.0)*500);
 }
 
-void voltage(){
-  //___ Volatge ___
-        if (currentMillis - previousMillis >= intervalWifi) {
+void indoorTemperatureControll(int presetTemp, float currentTemp, int element){
+      if (currentTemp <= (presetTemp - 3)){
+      if(element = 1) heatingElementOneOn();
+      else heatingElementTwoOn();
+      }
+    else if(tempAirFirst >= (heaterOneTemp + 3)){
+      if(element = 1) heatingElementOneOff();
+      else heatingElementTwoOff();
+      }
+}
+
+String getVoltage(){
                 int sensorValue = analogRead(elecConsumption);
-                String voltage =  String(sensorValue * (5.0 / 1023.0));
-                sendToWifiModule("smarthouse/voltage/value/reply",voltage);
+                return  String(sensorValue * (5.0 / 1023.0));
         }
-}
 
 void serialStringHandler(String serial_String){
   
@@ -347,7 +374,5 @@ void serialStringHandler(String serial_String){
         }
                 serial_String = " ";
 
-                if (currentMillis - previousMillis >= intervalWifi) {
-                        previousMillis = currentMillis;
-                }
+            
 }
