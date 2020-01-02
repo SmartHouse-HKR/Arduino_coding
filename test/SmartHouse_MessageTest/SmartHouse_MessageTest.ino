@@ -24,6 +24,8 @@ bool isFireOn;
 bool isStoveOn;
 bool isWaterLeaking;
 bool isDoorClosed;
+bool isRadiatorOneOn=false;
+bool isRadiatorTwoOn=false;
 
 String serial_String = " ";
 
@@ -43,13 +45,12 @@ SMT160 smt160;
 // heater sentinel variables
 boolean isHeaterOneArmed = false;
 boolean isHeaterTwoArmed = false;
-int heaterOneTemp;
-int heaterTwoTemp;
+int heaterOneTemp=30;
+int heaterTwoTemp=30;
 
 // outdoor light
 boolean isOutdoorLightArmed = true;
-boolean outdoorLightState = false; // true = on, false = off
-boolean outdoorLightLastState = outdoorLightState;
+boolean isOutdoorLightOn = false; // true = on, false = off
 // alarm
 boolean isBurglarAlarmArmed = true;
 
@@ -63,10 +64,10 @@ void alarmOff();
 void alarmOn();
 void burglarAlarmLampOff(void);
 void burglarAlarmLampOn(void);
-void heatingElementOneOn(void);
-void heatingElementOneOff(void);
-void heatingElementTwoOn(void);
-void heatingElementTwoOff(void);
+void RadiatorOneOn(void);
+void RadiatorOneOff(void);
+void RadiatorTwoOn(void);
+void RadiatorTwoOff(void);
 void indoorLightOn(void);
 void indoorLightOff(void);
 void outdoorLightOn(void);
@@ -134,11 +135,12 @@ void loop() {
                 indoorTemperatureControll(heaterTwoTemp, getIndoorTemperature(tempSecondSens), 2);
 
         if (currentMillis - previousMillis >= intervalWifi) {
-
+                if(true){
                 //digital temp sensor
-                sendToWifiModule("smarthouse/outdoor_temperature/value", getOutsideTemperature());
+                sendToWifiModule("smarthouse/outdoor_temperature/value/reply", getOutsideTemperature());
                 //___ Volatge ___
                 sendToWifiModule("smarthouse/voltage/value/reply",getVoltage());
+                }
         }
         if (currentMillis - previousMillis >= intervalWifi) {
                 previousMillis = currentMillis;
@@ -150,16 +152,16 @@ void fireCheck(){
         if(digitalRead(fireAlarmSwitch) == isFireOn)
                 return;
         isFireOn = !isFireOn;
-        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/trigger", "true");
-        else sendToWifiModule("smarthouse/fire_alarm/trigger", "false");
+        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/trigger/reply", "true");
+        else sendToWifiModule("smarthouse/fire_alarm/trigger/reply", "false");
 }
 void waterLeakageCheck(){
 
         if(digitalRead(waterLeakSwitch) == isWaterLeaking)
                 return;
         isWaterLeaking = !isWaterLeaking;
-        if(isWaterLeaking == true) sendToWifiModule("/smarthouse/water_leak/trigger", "true");
-        else sendToWifiModule("/smarthouse/water_leak/trigger", "false");
+        if(isWaterLeaking == true) sendToWifiModule("/smarthouse/water_leak/trigger/reply", "true");
+        else sendToWifiModule("/smarthouse/water_leak/trigger/reply", "false");
 
 }
 void stoveCheck(){
@@ -167,8 +169,8 @@ void stoveCheck(){
         if(digitalRead(ovenSwitch) == isStoveOn)
                 return;
         isStoveOn = !isStoveOn;
-        if(isStoveOn == true) sendToWifiModule("/smarthouse/oven/state", "true");
-        else sendToWifiModule("/smarthouse/oven/state", "false");
+        if(isStoveOn == true) sendToWifiModule("/smarthouse/oven/state/reply", "true");
+        else sendToWifiModule("/smarthouse/oven/state/reply", "false");
 }
 
 void windowCheck(){
@@ -177,11 +179,11 @@ void windowCheck(){
                 return;
         isWindowOpen = !isWindowOpen;
         if(isWindowOpen == true) {
-                sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
+                sendToWifiModule("/smarthouse/window_alarm/trigger/reply", "true");
                 burglarAlarmLampOn();
                 alarmOn();
         }else {
-                sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
+                sendToWifiModule("/smarthouse/window_alarm/trigger/reply", "false");
                 burglarAlarmLampOff();
                 alarmOff();
         }
@@ -189,10 +191,9 @@ void windowCheck(){
 
 
 void doorCheck(){
-  
-        if(isDoorClosed == isClosing(burglarAlarmSensor))
+        if(isDoorClosed == getUpdatedDoorValue(burglarAlarmSensor))
          return;
-         isDoorClosed != isDoorClosed;
+         isDoorClosed = !isDoorClosed;
         if(isDoorClosed == false) {
                 Serial.println("door is opening");
                 burglarAlarmLampOn();
@@ -204,7 +205,7 @@ void doorCheck(){
         }
 }
 
-bool isClosing(int pin){
+bool getUpdatedDoorValue(int pin){
         bool readValue = digitalRead(burglarAlarmSensor);
         delay(2);
         readValue = readValue || digitalRead(burglarAlarmSensor);
@@ -217,13 +218,13 @@ bool isClosing(int pin){
 void outdoorLightCheck(){
 
         int sensorValue = analogRead(lightSensor);
-        delay(10);
-        if(sensorValue < 50&&outdoorLightState != true) {
+
+        if(sensorValue < 300&&isOutdoorLightOn != true) {
                 outdoorLightOn();
-                outdoorLightState=true;
-        }else if(sensorValue > 100&&outdoorLightState != false) {
+                isOutdoorLightOn=true;
+        }else if(sensorValue > 500&&isOutdoorLightOn != false) {
                 outdoorLightOff();
-                outdoorLightState=false;
+                isOutdoorLightOn=false;
         }
 }
 
@@ -241,14 +242,28 @@ float getIndoorTemperature(const int pin){
         return ((temp / 1024.0)*500);
 }
 
-void indoorTemperatureControll(int presetTemp, float currentTemp, int element){
+void indoorTemperatureControll(int presetTemp, float currentTemp, int radiator){
         if (currentTemp <= (presetTemp - 3)) {
-                if(element = 1) heatingElementOneOn();
-                else heatingElementTwoOn();
+                if(radiator = 1&&!RadiatorOneOn) {
+                  RadiatorOneOn();
+                  isRadiatorOneOn=true;
+                }
+                else if(radiator = 2&&!isRadiatorTwoOn){
+                  RadiatorTwoOn();
+                  isRadiatorTwoOn=true;
+                }
         }
         else if(currentTemp >= (presetTemp + 3)) {
-                if(element = 1) heatingElementOneOff();
-                else heatingElementTwoOff();
+                Serial.print("RadiatorOneOntruw");
+                if(radiator = 1&&RadiatorOneOn){
+                  Serial.println("RadiatorOneOntruw");
+                  RadiatorOneOff();
+                  isRadiatorOneOn=false;
+                }
+                else if(radiator = 2&&RadiatorTwoOn){
+                  RadiatorTwoOff();
+                  isRadiatorTwoOn=false;
+                }
         }
 }
 
@@ -270,12 +285,14 @@ void serialStringHandler(String serial_String){
         }
 
         else if(serial_String == "3\n") {
-                Serial.println("3fromserial");
-                outdoorLightOn();
+                isOutdoorLightArmed=!isOutdoorLightArmed;
         }
 
         else if(serial_String == "4\n") {
-                outdoorLightOff();
+                isOutdoorLightArmed=false;
+                isOutdoorLightOn=!isOutdoorLightOn;
+                if(isOutdoorLightOn)outdoorLightOn();
+                else  outdoorLightOff();
         }
 
         else if(serial_String == "5\n") {
@@ -295,19 +312,19 @@ void serialStringHandler(String serial_String){
         }
 
         else if(serial_String == "9\n") {
-                heatingElementOneOn();
+                RadiatorOneOn();
         }
 
         else if(serial_String == "0\n") {
-                heatingElementOneOff();
+                RadiatorOneOff();
         }
 
         else if(serial_String == "q\n") {
-                heatingElementTwoOn();
+                RadiatorTwoOn();
         }
 
         else if(serial_String == "w\n") {
-                heatingElementTwoOff();
+                RadiatorTwoOff();
         }
 
         else if(serial_String == "a\n") {

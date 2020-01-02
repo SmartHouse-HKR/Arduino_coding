@@ -31,7 +31,7 @@ void burglarAlarmLampOn(){
    digitalWrite(13, LOW ); 
    }    
  
-void heatingElementOneOff(){
+void RadiatorOneOff(){
     Serial.println("heat el off");
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
@@ -39,7 +39,7 @@ void heatingElementOneOff(){
    digitalWrite(13, HIGH); 
    }    
 
-void heatingElementOneOn(){
+void RadiatorOneOn(){
    Serial.println("heat el on");
    digitalWrite(8, HIGH); 
    digitalWrite(11, LOW); 
@@ -48,7 +48,7 @@ void heatingElementOneOn(){
 }
 
  
-void heatingElementTwoOff(){
+void RadiatorTwoOff(){
   Serial.println("heat el 2 off");
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
@@ -56,7 +56,7 @@ void heatingElementTwoOff(){
    digitalWrite(13, HIGH); 
 }
     
-void heatingElementTwoOn(){
+void RadiatorTwoOn(){
   Serial.println("heat el 2 on");
    digitalWrite(8, LOW); 
    digitalWrite(11, HIGH); 
