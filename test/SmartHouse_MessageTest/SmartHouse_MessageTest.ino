@@ -26,6 +26,8 @@ bool isWaterLeaking;
 bool isDoorClosed;
 bool isRadiatorOneOn=false;
 bool isRadiatorTwoOn=false;
+bool isSendingTemp=true;
+bool isSendingVoltage=true;
 
 String serial_String = " ";
 
@@ -135,16 +137,27 @@ void loop() {
                 indoorTemperatureControll(heaterTwoTemp, getIndoorTemperature(tempSecondSens), 2);
 
         if (currentMillis - previousMillis >= intervalWifi) {
-                if(true){
-                //digital temp sensor
-                sendToWifiModule("smarthouse/outdoor_temperature/value/reply", getOutsideTemperature());
-                //___ Volatge ___
-                sendToWifiModule("smarthouse/voltage/value/reply",getVoltage());
+                if(isSendingTemp){
+                sendToWifiModule("smarthouse/outdoor_temperature/value/reply", getOutsideTemperature());                                  
+                Serial.println("first_floor_temp: " + floatToString(getIndoorTemperature(tempFirstSens)));
+                Serial.println("second_floor_temp: " + floatToString(getIndoorTemperature(tempSecondSens)));
                 }
+                //___ Volatge ___
+                if(isSendingVoltage)
+                sendToWifiModule("smarthouse/voltage/value/reply",getVoltage());
+                
         }
         if (currentMillis - previousMillis >= intervalWifi) {
                 previousMillis = currentMillis;
         }
+}
+String floatToString(float temperature)
+{ 
+  char temp[10];
+  String tempAsString;
+  dtostrf(temperature,1,2,temp);
+  tempAsString = String(temp);
+  return tempAsString;
 }
 
 void fireCheck(){
@@ -243,24 +256,25 @@ float getIndoorTemperature(const int pin){
 }
 
 void indoorTemperatureControll(int presetTemp, float currentTemp, int radiator){
+  Serial.println(presetTemp);
         if (currentTemp <= (presetTemp - 3)) {
-                if(radiator = 1&&!RadiatorOneOn) {
+          Serial.println("lower");
+                if(radiator == 1&&!isRadiatorOneOn) {
                   RadiatorOneOn();
                   isRadiatorOneOn=true;
                 }
-                else if(radiator = 2&&!isRadiatorTwoOn){
+                else if(radiator == 2&&!isRadiatorTwoOn){
                   RadiatorTwoOn();
                   isRadiatorTwoOn=true;
                 }
         }
         else if(currentTemp >= (presetTemp + 3)) {
-                Serial.print("RadiatorOneOntruw");
-                if(radiator = 1&&RadiatorOneOn){
-                  Serial.println("RadiatorOneOntruw");
+          Serial.println("higher");
+                if(radiator == 1&&isRadiatorOneOn){
                   RadiatorOneOff();
                   isRadiatorOneOn=false;
                 }
-                else if(radiator = 2&&RadiatorTwoOn){
+                else if(radiator == 2&&isRadiatorTwoOn){
                   RadiatorTwoOff();
                   isRadiatorTwoOn=false;
                 }
@@ -339,7 +353,12 @@ void serialStringHandler(String serial_String){
                 if(isOutdoorLightArmed) Serial.println("OutdoorLight Armed");
                 else Serial.println("OutdoorLight Disarmed");
         }
-
+        else if(serial_String == "voltage\n"){
+          isSendingVoltage = !isSendingVoltage;
+        }
+        else if(serial_String == "temp\n"){
+          isSendingTemp = !isSendingTemp;
+        }
         else if(serial_String == "z\n") {
                 timerTwoOn();
         }else if(serial_String == "x\n") {

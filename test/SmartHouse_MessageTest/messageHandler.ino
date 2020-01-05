@@ -42,6 +42,7 @@ void messageHandler(String topic, String message) {
         }
 
         else if(topic == "smarthouse/heater_2/state") {
+     
                 isHeaterTwoArmed =  stringToBoolean(message);
         }
 
