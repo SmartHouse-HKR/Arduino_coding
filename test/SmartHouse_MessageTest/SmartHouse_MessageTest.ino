@@ -108,8 +108,11 @@ void loop() {
         if(Serial.available())
                 serialStringHandler(Serial.readString());
 
+  
+
 //___WiFi setup___
         if (wifiMessage.available()) {
+                Serial.println("Gets triggerred inside the IF");
                 String receivedData = getWifiMessage();
                 String topic = getSubstring(receivedData, ' ', 0);
                 String message = getSubstring(receivedData, ' ', 1);
@@ -138,13 +141,13 @@ void loop() {
 
         if (currentMillis - previousMillis >= intervalWifi) {
                 if(isSendingTemp){
-                sendToWifiModule("smarthouse/outdoor_temperature/value/reply", getOutsideTemperature());                                  
+                sendToWifiModule("smarthouse/outdoor_temperature/value", getOutsideTemperature());                                  
                 Serial.println("first_floor_temp: " + floatToString(getIndoorTemperature(tempFirstSens)));
                 Serial.println("second_floor_temp: " + floatToString(getIndoorTemperature(tempSecondSens)));
                 }
                 //___ Volatge ___
                 if(isSendingVoltage)
-                sendToWifiModule("smarthouse/voltage/value/reply",getVoltage());
+                sendToWifiModule("smarthouse/voltage/value",getVoltage());
                 
         }
         if (currentMillis - previousMillis >= intervalWifi) {
@@ -165,16 +168,16 @@ void fireCheck(){
         if(digitalRead(fireAlarmSwitch) == isFireOn)
                 return;
         isFireOn = !isFireOn;
-        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/trigger/reply", "true");
-        else sendToWifiModule("smarthouse/fire_alarm/trigger/reply", "false");
+        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/trigger", "true");
+        else sendToWifiModule("smarthouse/fire_alarm/trigger", "false");
 }
 void waterLeakageCheck(){
 
         if(digitalRead(waterLeakSwitch) == isWaterLeaking)
                 return;
         isWaterLeaking = !isWaterLeaking;
-        if(isWaterLeaking == true) sendToWifiModule("/smarthouse/water_leak/trigger/reply", "true");
-        else sendToWifiModule("/smarthouse/water_leak/trigger/reply", "false");
+        if(isWaterLeaking == true) sendToWifiModule("/smarthouse/water_leak/trigger", "true");
+        else sendToWifiModule("/smarthouse/water_leak/trigger", "false");
 
 }
 void stoveCheck(){
@@ -182,8 +185,8 @@ void stoveCheck(){
         if(digitalRead(ovenSwitch) == isStoveOn)
                 return;
         isStoveOn = !isStoveOn;
-        if(isStoveOn == true) sendToWifiModule("/smarthouse/oven/state/reply", "true");
-        else sendToWifiModule("/smarthouse/oven/state/reply", "false");
+        if(isStoveOn == true) sendToWifiModule("/smarthouse/oven/state", "true");
+        else sendToWifiModule("/smarthouse/oven/state", "false");
 }
 
 void windowCheck(){
@@ -192,11 +195,11 @@ void windowCheck(){
                 return;
         isWindowOpen = !isWindowOpen;
         if(isWindowOpen == true) {
-                sendToWifiModule("/smarthouse/window_alarm/trigger/reply", "true");
+                sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
                 burglarAlarmLampOn();
                 alarmOn();
         }else {
-                sendToWifiModule("/smarthouse/window_alarm/trigger/reply", "false");
+                sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
                 burglarAlarmLampOff();
                 alarmOff();
         }
@@ -232,10 +235,10 @@ void outdoorLightCheck(){
 
         int sensorValue = analogRead(lightSensor);
 
-        if(sensorValue < 300&&isOutdoorLightOn != true) {
+        if(sensorValue < 40&&isOutdoorLightOn != true) {
                 outdoorLightOn();
                 isOutdoorLightOn=true;
-        }else if(sensorValue > 500&&isOutdoorLightOn != false) {
+        }else if(sensorValue > 100&&isOutdoorLightOn != false) {
                 outdoorLightOff();
                 isOutdoorLightOn=false;
         }
@@ -292,6 +295,7 @@ void serialStringHandler(String serial_String){
                 Serial.print(serial_String);
         if(serial_String == "1\n") {
                 indoorLightOn();
+                Serial.println("Light on movafakas");
         }
 
         else if(serial_String == "2\n") {
@@ -361,12 +365,15 @@ void serialStringHandler(String serial_String){
         }
         else if(serial_String == "z\n") {
                 timerTwoOn();
-        }else if(serial_String == "x\n") {
+        }
+        else if(serial_String == "x\n") {
                 timerTwoOff();
-        }else if(serial_String.substring(0,3) == "ip ") {
+        }
+        else if(serial_String.substring(0,3) == "ip ") {
                 Serial.println("setting ip to: "+ serial_String.substring(3));
                 sendToWifiModule("ip", serial_String.substring(3));
-        }else if(serial_String.substring(0,5) == "wifi ") {
+        }
+        else if(serial_String.substring(0,5) == "wifi ") {
                 Serial.println("setting wifi to: "+ serial_String.substring(5));
                 sendToWifiModule("wifi", serial_String.substring(5));
         } else if(serial_String.substring(0,10) == "wifi_pass ") {
