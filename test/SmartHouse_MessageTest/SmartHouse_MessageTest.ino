@@ -53,6 +53,8 @@ int heaterTwoTemp=30;
 // outdoor light
 boolean isOutdoorLightArmed = true;
 boolean isOutdoorLightOn = false; // true = on, false = off
+boolean outdoorLightState = false;
+boolean outdoorLightLastState = outdoorLightState;
 // alarm
 boolean isBurglarAlarmArmed = true;
 
@@ -99,7 +101,7 @@ void setup() {
 
         wifiMessage.begin(4800);
 
-}
+} 
 
 void loop() {
 
@@ -112,7 +114,7 @@ void loop() {
 
 //___WiFi setup___
         if (wifiMessage.available()) {
-                Serial.println("Gets triggerred inside the IF");
+                
                 String receivedData = getWifiMessage();
                 String topic = getSubstring(receivedData, ' ', 0);
                 String message = getSubstring(receivedData, ' ', 1);
@@ -168,16 +170,16 @@ void fireCheck(){
         if(digitalRead(fireAlarmSwitch) == isFireOn)
                 return;
         isFireOn = !isFireOn;
-        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/trigger", "true");
-        else sendToWifiModule("smarthouse/fire_alarm/trigger", "false");
+        if(isFireOn == true) sendToWifiModule("smarthouse/fire_alarm/state", "true");
+        else sendToWifiModule("smarthouse/fire_alarm/state", "false");
 }
 void waterLeakageCheck(){
 
         if(digitalRead(waterLeakSwitch) == isWaterLeaking)
                 return;
         isWaterLeaking = !isWaterLeaking;
-        if(isWaterLeaking == true) sendToWifiModule("/smarthouse/water_leak/trigger", "true");
-        else sendToWifiModule("/smarthouse/water_leak/trigger", "false");
+        if(isWaterLeaking == true) sendToWifiModule("smarthouse/water_leak/state", "true");
+        else sendToWifiModule("smarthouse/water_leak/state", "false");
 
 }
 void stoveCheck(){
@@ -185,8 +187,8 @@ void stoveCheck(){
         if(digitalRead(ovenSwitch) == isStoveOn)
                 return;
         isStoveOn = !isStoveOn;
-        if(isStoveOn == true) sendToWifiModule("/smarthouse/oven/state", "true");
-        else sendToWifiModule("/smarthouse/oven/state", "false");
+        if(isStoveOn == true) sendToWifiModule("smarthouse/oven/state", "true");
+        else sendToWifiModule("smarthouse/oven/state", "false");
 }
 
 void windowCheck(){
@@ -195,13 +197,13 @@ void windowCheck(){
                 return;
         isWindowOpen = !isWindowOpen;
         if(isWindowOpen == true) {
-                sendToWifiModule("/smarthouse/window_alarm/trigger", "true");
-                burglarAlarmLampOn();
-                alarmOn();
+                sendToWifiModule("smarthouse/window_alarm/state", "true");
+                //burglarAlarmLampOn();
+                //alarmOn();
         }else {
-                sendToWifiModule("/smarthouse/window_alarm/trigger", "false");
-                burglarAlarmLampOff();
-                alarmOff();
+                sendToWifiModule("smarthouse/window_alarm/state", "false");
+                //burglarAlarmLampOff();
+                //alarmOff();
         }
 }
 
@@ -233,22 +235,35 @@ bool getUpdatedDoorValue(int pin){
 
 void outdoorLightCheck(){
 
-        int sensorValue = analogRead(lightSensor);
+         int sensorValue = analogRead(lightSensor);   
 
-        if(sensorValue < 40&&isOutdoorLightOn != true) {
-                outdoorLightOn();
-                isOutdoorLightOn=true;
-        }else if(sensorValue > 100&&isOutdoorLightOn != false) {
-                outdoorLightOff();
-                isOutdoorLightOn=false;
-        }
+        //Serial.println(isOutdoorLightArmed);
+        
+        if(isOutdoorLightArmed) {
+          //Serial.println(sensorValue);
+          if(sensorValue < 40){         
+            outdoorLightState = true;     
+            }else {
+              outdoorLightState = false;      
+              }
+                   
+           if(outdoorLightLastState != outdoorLightState){      
+                if(outdoorLightState){       
+                  outdoorLightOn();          
+                  }else{        
+                    outdoorLightOff();       
+                    }        
+               }       
+           outdoorLightLastState = outdoorLightState;  
+
+        } 
 }
 
 String getOutsideTemperature(){
         int temp = smt160.getTemp(tempSensorOutside);
         // if sensor failed getTemp return 0xffff
         if(temp == 0xffff)
-                return "null";
+                return "null";    
 
         return String(temp/100);
 }

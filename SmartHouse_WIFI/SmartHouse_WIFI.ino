@@ -53,6 +53,8 @@ void subscribeToTopics() {
   client.subscribe("smarthouse/indoor_light/state"); //done
   client.subscribe("smarthouse/outdoor_light/state"); //done
 
+  client.subscribe("smarthouse/outdoor_light/trigger");
+
   client.subscribe("smarthouse/heater_1/state");
   client.subscribe("smarthouse/heater_2/state");
   client.subscribe("smarthouse/heater_1/value");
@@ -77,10 +79,6 @@ void subscribeToTopics() {
   client.subscribe("smarthouse/oven/state");
   client.subscribe("smarthouse/window_alarm/state");
   client.subscribe("smarthouse/window_alarm/trigger");
-
-  client.subscribe("smarthouse/window_alarm/state");
-  client.subscribe("smarthouse/window_alarm/state");
-
 
 }
 

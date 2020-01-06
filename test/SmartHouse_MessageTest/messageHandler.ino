@@ -7,7 +7,6 @@ boolean stringToBoolean(String message){
 
 
 void messageHandler(String topic, String message) {
-
         //for testing 
         if(topic == "echo") {
                 sendToWifiModule("echo/reply",message+"_from_arduino");
@@ -22,11 +21,24 @@ void messageHandler(String topic, String message) {
 
 //Outdoor light on or off
         else if(topic == "smarthouse/outdoor_light/state") {
-                isOutdoorLightArmed = false;
                 Serial.println("isOutdoorLightArmed is false");
                 if(stringToBoolean(message))outdoorLightOn();
                 else outdoorLightOff();
         }
+
+        else if(topic == "smarthouse/outdoor_light/trigger") {
+
+                if(stringToBoolean(message)) {
+                   isOutdoorLightArmed = true;
+                   Serial.print("is true: " );
+                   
+                  } else {
+                    isOutdoorLightArmed = false;
+                    Serial.print("is false: " );
+                    }
+          
+          }
+        
 //Heater One
         else if (topic == "smarthouse/heater_1/value" ) {
                 heaterOneTemp = message.toInt();
