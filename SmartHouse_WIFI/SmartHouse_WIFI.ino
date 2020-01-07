@@ -58,7 +58,7 @@ void subscribeToTopics() {
   client.subscribe("smarthouse/heater_1/state");
   client.subscribe("smarthouse/heater_2/state");
   client.subscribe("smarthouse/heater_1/value");
-  client.subscribe("smarthouse/heater_1/value");
+  client.subscribe("smarthouse/heater_2/value");
 
   client.subscribe("smarthouse/fan/speed");
 

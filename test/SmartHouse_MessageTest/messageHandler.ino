@@ -37,6 +37,16 @@ void messageHandler(String topic, String message) {
                     Serial.print("is false: " );
                     }
           
+         }
+
+//Switches
+
+         else if(topic == "smarthouse/fire_alarm/state") {
+            fireIsArmed = message;
+            Serial.println(message);
+         }
+         else if(topic == "smarthouse/window_alarm/state") {
+            windowIsArmed = message;
           }
         
 //Heater One
@@ -50,16 +60,19 @@ void messageHandler(String topic, String message) {
 
 //Heater Two
         else if (topic == "smarthouse/heater_2/value" ) {
+                Serial.println("the message: " + message);
                 heaterTwoTemp = message.toInt();
+                
         }
 
         else if(topic == "smarthouse/heater_2/state") {
      
                 isHeaterTwoArmed =  stringToBoolean(message);
         }
-
+//Alarm
         else if(topic == "smarthouse/burglar_alarm/state") {
-                isBurglarAlarmArmed =  stringToBoolean(message);
+                doorIsArmed = message;
+                
         }
 
 //Fan

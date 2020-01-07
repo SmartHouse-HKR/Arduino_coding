@@ -219,7 +219,7 @@ if(doorValue == 0){
   tempAirFirst =  tempAirFirst / 10;
 
   if(isHeaterOneArmed){
-    if (tempAirFirst <= (heaterOneTemp - 3)){
+    if (tempAirFirst <= (heaterOneTemp)){
       heatingElementOneOn();
       }
     else if(tempAirFirst >= (heaterOneTemp + 3)){
@@ -232,7 +232,7 @@ if(doorValue == 0){
   tempAirSecond =  tempAirSecond / 10;
 
   if(isHeaterTwoArmed){
-    if (tempAirSecond <= (heaterTwoTemp - 3)){
+    if (tempAirSecond <= (heaterTwoTemp)){
       heatingElementTwoOn();
       }
     else if(tempAirSecond >= (heaterTwoTemp + 3)){
